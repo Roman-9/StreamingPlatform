@@ -1,4 +1,6 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+# Platformă de Streaming
+
+Proiectul simulează funcționalitatea de backend a unei platforme de streaming (tip Netflix/Spotify). Aplicația gestionează un catalog multimedia complex, conturile utilizatorilor și sistemul de abonamente (Basic, Standard, Premium). Funcționalitățile principale permit utilizatorilor să se înregistreze, să caute conținut, să își creeze liste de favorite ("Watchlist") și să lase recenzii.
 
 ### Folosiți template-ul corespunzător grupei voastre!
 
