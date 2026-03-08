@@ -15,7 +15,7 @@ public:
           descriere(descriere) {
     }
 
-    [[nodiscard]] const std::string getTitle() const {
+    [[nodiscard]] const std::string& getTitle() const {
         return title;
     }
 
@@ -23,7 +23,7 @@ public:
         return durata;
     }
 
-    [[nodiscard]] const std::string getDescriere() const {
+    [[nodiscard]] const std::string& getDescriere() const {
         return descriere;
     }
 
@@ -135,11 +135,11 @@ public:
           watchlist() {
     }
 
-    [[nodiscard]] const std::string getNume() const {
+    [[nodiscard]] const std::string& getNume() const {
         return nume;
     }
 
-    [[nodiscard]] const std::string getPlan() const {
+    [[nodiscard]] const std::string& getPlan() const {
         return plan;
     }
 
