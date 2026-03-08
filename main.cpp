@@ -15,7 +15,7 @@ public:
           descriere(descriere) {
     }
 
-    [[nodiscard]] std::string getTitle() const {
+    [[nodiscard]] const std::string getTitle() const {
         return title;
     }
 
@@ -23,7 +23,7 @@ public:
         return durata;
     }
 
-    [[nodiscard]] std::string getDescriere() const {
+    [[nodiscard]] const std::string getDescriere() const {
         return descriere;
     }
 
@@ -135,11 +135,11 @@ public:
           watchlist() {
     }
 
-    [[nodiscard]] std::string getNume() const {
+    [[nodiscard]] const std::string getNume() const {
         return nume;
     }
 
-    [[nodiscard]] std::string getPlan() const {
+    [[nodiscard]] const std::string getPlan() const {
         return plan;
     }
 
@@ -177,6 +177,7 @@ int main() {
     std::cout << "Film 1: " << film1.getTitle() << ", Durata: " << film1.getDurata() << ", Descriere: " << film1.
             getDescriere() << "\n";
     Utilizator user1("Andrei", "Free");
+    std::cout << "Nume utilizator: " << user1.getNume() << "\n";
     std::cout << "\nProfil initial: \n";
     std::cout << user1;
     user1.setPlan("Premium");
