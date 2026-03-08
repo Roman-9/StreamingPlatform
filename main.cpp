@@ -1,55 +1,210 @@
 #include <iostream>
-#include <array>
-#include "include/Example.h"
-// This also works if you do not want `include/`, but some editors might not like it
-// #include "Example.h"
+#include <string>
+
+class Content {
+private:
+    std::string title;
+    int durata;
+    std::string descriere;
+
+public:
+    explicit Content(const std::string &title = "Fara titlu", int durata = 0,
+                     const std::string &descriere = "Fara descriere")
+        : title(title),
+          durata(durata),
+          descriere(descriere) {
+    }
+
+    [[nodiscard]] std::string getTitle() const {
+        return title;
+    }
+
+    [[nodiscard]] int getDurata() const {
+        return durata;
+    }
+
+    [[nodiscard]] std::string getDescriere() const {
+        return descriere;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Content &content) {
+        os << content.title << " are o durata de " << content.durata << "\n";
+        os << "Descriere: " << content.descriere << "\n";
+        return os;
+    }
+};
+
+class Watchlist {
+private:
+    Content *filme;
+    int capacitate;
+    int nrFilme;
+
+public:
+    explicit Watchlist(int capacitate = 5)
+        : capacitate(capacitate),
+          nrFilme(0) {
+        filme = new Content[capacitate];
+    }
+
+    //Destructor
+    ~Watchlist() {
+        delete[] filme;
+    }
+
+    //Constructorul de copiere
+    Watchlist(const Watchlist &other) : capacitate(other.capacitate), nrFilme(other.nrFilme) {
+        filme = new Content[capacitate];
+        for (int i = 0; i < nrFilme; ++i) {
+            filme[i] = other.filme[i];
+        }
+    }
+
+    //Constructorul de atribuire
+    Watchlist &operator=(const Watchlist &other) {
+        if (this != &other) {
+            delete[] filme;
+            capacitate = other.capacitate;
+            nrFilme = other.nrFilme;
+            filme = new Content[capacitate];
+            for (int i = 0; i < nrFilme; ++i) {
+                filme[i] = other.filme[i];
+            }
+        }
+        return *this;
+    }
+
+    void adaugaFilm(const Content &filmNou) {
+        if (nrFilme == capacitate) {
+            //daca am atins capacitatea maxima, o dublam
+            capacitate *= 2;
+            Content *filmeNou = new Content[capacitate];
+            for (int i = 0; i < nrFilme; ++i) {
+                filmeNou[i] = filme[i];
+            }
+            delete[] filme;
+            filme = filmeNou;
+            std::cout << "Capacitatea listei a fost marita la " << capacitate << "!\n";
+        }
+        filme[nrFilme] = filmNou;
+        nrFilme++;
+    }
+
+    bool stergeFilmDupaTitlu(const std::string &titluCautat) {
+        for (int i = 0; i < nrFilme; ++i) {
+            if (filme[i].getTitle() == titluCautat) {
+                for (int j = i; j < nrFilme - 1; ++j) {
+                    filme[j] = filme[j + 1];
+                }
+                nrFilme--;
+                std::cout << "Filmul '" << titluCautat << "' a fost sters cu succes.\n";
+                return true;
+            }
+        }
+        std::cout << "Filmul '" << titluCautat << "' nu a fost gasit in lista.\n";
+        return false;
+    }
+
+    [[nodiscard]] int calculeazaDurataTotala() const {
+        int durataTotala = 0;
+        for (int i = 0; i < nrFilme; ++i) {
+            durataTotala += filme[i].getDurata();
+        }
+        return durataTotala;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Watchlist &wl) {
+        for (int i = 0; i < wl.nrFilme; ++i) {
+            os << "Film " << i + 1 << ": " << wl.filme[i];
+        }
+        os << "Numar de filme: " << wl.nrFilme << "\n";
+        return os;
+    }
+};
+
+class Utilizator {
+private:
+    std::string nume;
+    std::string plan;
+    Watchlist watchlist;
+
+public:
+    explicit Utilizator(const std::string &nume = "Anon", const std::string &plan = "Free")
+        : nume(nume),
+          plan(plan),
+          watchlist() {
+    }
+
+    [[nodiscard]] std::string getNume() const {
+        return nume;
+    }
+
+    [[nodiscard]] std::string getPlan() const {
+        return plan;
+    }
+
+    void setPlan(const std::string &planNou) {
+        plan = planNou;
+    }
+
+    void adaugaFilmInLista(const Content &film) {
+        watchlist.adaugaFilm(film);
+    }
+
+    void afiseazaTimp() const {
+        std::cout << nume << " are nevoie de " << watchlist.calculeazaDurataTotala() <<
+                " minute pentru a vedea toata lista.\n";
+    }
+
+    void stergeDinLista(const std::string &titlu) {
+        watchlist.stergeFilmDupaTitlu(titlu);
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Utilizator &user) {
+        os << "Utilizator: " << user.nume << " are planul tarifar: " << user.plan << "\n";
+        os << "Lista de filme este: \n" << user.watchlist << "\n";
+        return os;
+    }
+};
 
 int main() {
-    std::cout << "Hello, world! :)\n";
-    Example e1;
-    e1.g();
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
+    Content film1("Scream 7", 114,
+                  "When a new Ghostface killer emerges in the town where Sidney Prescott has built a new life, her darkest fears are realized as her daughter becomes the next target.");
+    Content film2("The Running Man", 133,
+                  "A man joins a game show in which contestants, allowed to flee anywhere in the world, are pursued by hunters hired to kill them.");
+    Content film3("F1: The Movie", 155,
+                  "A Formula One driver comes out of retirement to mentor and team up with a younger driver.");
+    std::cout << "Film 1: " << film1.getTitle() << ", Durata: " << film1.getDurata() << ", Descriere: " << film1.
+            getDescriere() << "\n";
+    Utilizator user1("Andrei", "Free");
+    std::cout << "\nProfil initial: \n";
+    std::cout << user1;
+    user1.setPlan("Premium");
+    user1.adaugaFilmInLista(film1);
+    user1.adaugaFilmInLista(film2);
+    user1.adaugaFilmInLista(film3);
+
+    std::cout << "Profil dupa modificari \n";
+    std::cout << user1;
+    user1.afiseazaTimp();
+
+    std::cout << "\nAndrei s-a uitat la The Running Man si il sterge din lista...\n";
+    user1.stergeDinLista("The Running Man");
+    std::cout << "\nAndrei vrea sa stearga un film care nu apare in lista...\n";
+    user1.stergeDinLista("Scream 6");
+    std::cout << "\nProfil dupa stergere \n";
+    std::cout << user1 << "\n";
+    user1.afiseazaTimp();
+
+    std::cout << "\nTestare constructorul de copiere \n";
+    Utilizator user2 = user1;
+    user2.setPlan("Basic");
+    std::cout << user1.getPlan() << "\n";
+    std::cout << user2.getPlan() << "\n";
+
+    std::cout << "\nTestare constructorul de atribuire \n";
+    Utilizator user3("Ana", "Free");
+    user3 = user1;
+    std::cout << user3 << "\n";
     return 0;
 }
