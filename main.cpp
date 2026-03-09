@@ -86,7 +86,7 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Watchlist &wl) {
-        for (int i = 0; i < wl.filme.size(); ++i) {
+        for (size_t i = 0; i < wl.filme.size(); ++i) {
             os << "Film " << i + 1 << ": " << wl.filme[i] ;
         }
         os << "Numar de filme: " << wl.filme.size() << "\n";
