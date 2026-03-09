@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Content {
 private:
@@ -36,67 +37,38 @@ public:
 
 class Watchlist {
 private:
-    Content *filme;
-    int capacitate;
-    int nrFilme;
+    std::vector<Content> filme;
 
 public:
-    explicit Watchlist(int capacitate = 5)
-        : capacitate(capacitate),
-          nrFilme(0) {
-        filme = new Content[capacitate];
-    }
+    Watchlist() = default;
 
     //Destructor
     ~Watchlist() {
-        delete[] filme;
+        filme.clear();
     }
 
     //Constructorul de copiere
-    Watchlist(const Watchlist &other) : capacitate(other.capacitate), nrFilme(other.nrFilme) {
-        filme = new Content[capacitate];
-        for (int i = 0; i < nrFilme; ++i) {
-            filme[i] = other.filme[i];
-        }
+    Watchlist(const Watchlist &other) : filme(other.filme) {
+        std::cout << "Constructor de copiere apelat.\n";
     }
 
     //Constructorul de atribuire
     Watchlist &operator=(const Watchlist &other) {
         if (this != &other) {
-            delete[] filme;
-            capacitate = other.capacitate;
-            nrFilme = other.nrFilme;
-            filme = new Content[capacitate];
-            for (int i = 0; i < nrFilme; ++i) {
-                filme[i] = other.filme[i];
-            }
+            filme = other.filme;
+            std::cout << "Operator de atribuire apelat.\n";
         }
         return *this;
     }
 
     void adaugaFilm(const Content &filmNou) {
-        if (nrFilme == capacitate) {
-            //daca am atins capacitatea maxima, o dublam
-            capacitate *= 2;
-            Content *filmeNou = new Content[capacitate];
-            for (int i = 0; i < nrFilme; ++i) {
-                filmeNou[i] = filme[i];
-            }
-            delete[] filme;
-            filme = filmeNou;
-            std::cout << "Capacitatea listei a fost marita la " << capacitate << "!\n";
-        }
-        filme[nrFilme] = filmNou;
-        nrFilme++;
+        filme.push_back(filmNou);
     }
 
     bool stergeFilmDupaTitlu(const std::string &titluCautat) {
-        for (int i = 0; i < nrFilme; ++i) {
-            if (filme[i].getTitle() == titluCautat) {
-                for (int j = i; j < nrFilme - 1; ++j) {
-                    filme[j] = filme[j + 1];
-                }
-                nrFilme--;
+        for (auto i = filme.begin(); i != filme.end(); ++i) {
+            if (i->getTitle() == titluCautat) {
+                filme.erase(i);
                 std::cout << "Filmul '" << titluCautat << "' a fost sters cu succes.\n";
                 return true;
             }
@@ -107,17 +79,17 @@ public:
 
     [[nodiscard]] int calculeazaDurataTotala() const {
         int durataTotala = 0;
-        for (int i = 0; i < nrFilme; ++i) {
-            durataTotala += filme[i].getDurata();
+        for (const auto& film : filme) {
+            durataTotala += film.getDurata();
         }
         return durataTotala;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Watchlist &wl) {
-        for (int i = 0; i < wl.nrFilme; ++i) {
-            os << "Film " << i + 1 << ": " << wl.filme[i];
+        for (int i = 0; i < wl.filme.size(); ++i) {
+            os << "Film " << i + 1 << ": " << wl.filme[i] ;
         }
-        os << "Numar de filme: " << wl.nrFilme << "\n";
+        os << "Numar de filme: " << wl.filme.size() << "\n";
         return os;
     }
 };
