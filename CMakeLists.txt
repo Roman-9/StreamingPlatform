@@ -25,7 +25,7 @@ include(FetchContent)
 
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-set(SFML_WARNINGS_AS_ERRORS OFF)
+#set(SFML_WARNINGS_AS_ERRORS OFF)
 
 # NOTE: Also update env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
@@ -42,24 +42,24 @@ if(NOT sqlite3_POPULATED)
     file(REMOVE ${sqlite3_SOURCE_DIR}/VERSION)
 endif()
 
-FetchContent_Declare(
-        SFML
-        GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG        3.0.2
-        GIT_SHALLOW    1
-        GIT_PROGRESS   ON
-)
-FetchContent_MakeAvailable(SFML)
+#FetchContent_Declare(
+#        SFML
+#        GIT_REPOSITORY https://github.com/SFML/SFML.git
+#        GIT_TAG        3.0.2
+#        GIT_SHALLOW    1
+#        GIT_PROGRESS   ON
+#)
+#FetchContent_MakeAvailable(SFML)
 
 ###############################################################################
 
 # external dependencies with find_package
 
 find_package(Threads REQUIRED)
-if(APPLE)
-elseif(UNIX)
-    find_package(X11)
-endif()
+#if(APPLE)
+#elseif(UNIX)
+#    find_package(X11)
+#endif()
 
 add_library(sqlite3 STATIC ${sqlite3_SOURCE_DIR}/sqlite3.c)
 target_include_directories(sqlite3 PUBLIC ${sqlite3_SOURCE_DIR})
@@ -75,20 +75,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Exceptii.cpp
         Watchlist.cpp
         Utilizator.cpp
-        PlatformaStreaming.cpp
-        ContinutVideo.h
-        ContinutVideo.cpp
-        Film.h
-        Film.cpp
-        Serial.h
-        Serial.cpp
-        Exceptii.h
-        Exceptii.cpp
-        Watchlist.h
-        Watchlist.cpp
-        Utilizator.h
-        Utilizator.cpp
-        PlatformaStreaming.h
         PlatformaStreaming.cpp
 )
 
@@ -111,13 +97,14 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
 
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
         sqlite3
-        SFML::Graphics SFML::Window SFML::System Threads::Threads
+        Threads::Threads
+#        SFML::Graphics SFML::Window SFML::System Threads::Threads
 )
 
-if(APPLE)
-elseif(UNIX)
-    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
-endif()
+#if(APPLE)
+#elseif(UNIX)
+#    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
+#endif()
 
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
