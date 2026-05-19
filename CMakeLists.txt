@@ -25,7 +25,7 @@ include(FetchContent)
 
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-#set(SFML_WARNINGS_AS_ERRORS OFF)
+set(SFML_WARNINGS_AS_ERRORS OFF)
 
 # NOTE: Also update env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
@@ -42,14 +42,14 @@ if(NOT sqlite3_POPULATED)
     file(REMOVE ${sqlite3_SOURCE_DIR}/VERSION)
 endif()
 
-#FetchContent_Declare(
-#        SFML
-#        GIT_REPOSITORY https://github.com/SFML/SFML.git
-#        GIT_TAG        3.0.2
-#        GIT_SHALLOW    1
-#        GIT_PROGRESS   ON
-#)
-#FetchContent_MakeAvailable(SFML)
+FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG        3.0.2
+        GIT_SHALLOW    1
+        GIT_PROGRESS   ON
+)
+FetchContent_MakeAvailable(SFML)
 
 ###############################################################################
 
@@ -77,6 +77,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Utilizator.cpp
         PlatformaStreaming.cpp
         Documentar.cpp
+        AplicatieGUI.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -99,7 +100,7 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
         sqlite3
         Threads::Threads
-#        SFML::Graphics SFML::Window SFML::System Threads::Threads
+        SFML::Graphics SFML::Window SFML::System Threads::Threads
 )
 
 #if(APPLE)

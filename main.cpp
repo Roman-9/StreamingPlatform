@@ -6,6 +6,8 @@
 #include "Utilizator.h"
 #include "Exceptii.h"
 #include "Documentar.h"
+#include "AplicatieGUI.h"
+
 
 int main() {
     std::cout << "=== INITIALIZARE NETFLIX PLATFORM ===\n\n";
@@ -116,12 +118,18 @@ int main() {
     auto doc1 = std::make_shared<Documentar>("Planet Earth", "Natura", "BBC", 50, "Animale", 0);
     std::cout << "Subiect documentar: " << doc1->getSubiect() << "\n";
 
-    // Testam Clone (Constructor Virtual)
+    // 12. Testam Clone (Constructor Virtual)
     auto docClonat = doc1->clone();
     std::cout << "Am clonat cu succes: " << docClonat->getTitlu() << "\n";
 
-    // Testam Atributul Static
+    // 13. Testam Atributul Static
     std::cout << "Pana acum s-au creat in memorie " << ContinutVideo::getNumarTotalContinut() << " obiecte video.\n";
 
+    // 14. LANSAM INTERFATA GRAFICA
+    std::cout << "\n[INFO] Lansam interfata grafica SFML...\n";
+    AplicatieGUI app(platforma);
+    app.ruleaza();
+
     return 0;
+
 }
