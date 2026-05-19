@@ -1,6 +1,7 @@
 #pragma once
 #include "ContinutVideo.h"
 #include <vector>
+#include <memory>
 
 class Serial : public ContinutVideo {
 private:
@@ -22,4 +23,5 @@ public:
     [[nodiscard]] const std::vector<int>& getDurateEpisoade() const;
 
     [[nodiscard]] std::string getDurateAsConversieString() const;
+    [[nodiscard]] std::shared_ptr<ContinutVideo> clone() const override;
 };

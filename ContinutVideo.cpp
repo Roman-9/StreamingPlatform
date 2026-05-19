@@ -1,12 +1,17 @@
 #include "ContinutVideo.h"
 
+int ContinutVideo::numarTotalContinut = 0;
+
 ContinutVideo::ContinutVideo(std::string t, std::string g, std::string d, int v)
-    : titlu(std::move(t)), gen(std::move(g)), descriere(std::move(d)), varstaMinima(v) {}
+    : titlu(std::move(t)), gen(std::move(g)), descriere(std::move(d)), varstaMinima(v) {
+    numarTotalContinut++;
+}
 
 const std::string& ContinutVideo::getTitlu() const { return titlu; }
 const std::string& ContinutVideo::getGen() const { return gen; }
 const std::string& ContinutVideo::getDescriere() const { return descriere; }
 int ContinutVideo::getVarstaMinima() const { return varstaMinima; }
+int ContinutVideo::getNumarTotalContinut() { return numarTotalContinut; }
 
 void ContinutVideo::adaugaRecenzie(int nota) {
     if (nota >= 1 && nota <= 10) {

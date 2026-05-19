@@ -76,6 +76,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Watchlist.cpp
         Utilizator.cpp
         PlatformaStreaming.cpp
+        Documentar.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

@@ -47,3 +47,7 @@ std::string Serial::getDurateAsConversieString() const {
     }
     return ss.str();
 }
+
+std::shared_ptr<ContinutVideo> Serial::clone() const {
+    return std::make_shared<Serial>(*this);
+}

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 class ContinutVideo {
 protected:
@@ -10,6 +11,7 @@ protected:
     std::string descriere;
     int varstaMinima;
     std::vector<int> notePrimite;
+    static int numarTotalContinut;
 
 public:
     ContinutVideo(std::string t, std::string g, std::string d, int v);
@@ -23,6 +25,10 @@ public:
     [[nodiscard]] const std::string& getGen() const;
     [[nodiscard]] const std::string& getDescriere() const;
     [[nodiscard]] int getVarstaMinima() const;
+
+    [[nodiscard]] virtual std::shared_ptr<ContinutVideo> clone() const = 0;
+
+    static int getNumarTotalContinut();
 
     void adaugaRecenzie(int nota);
     [[nodiscard]] double getRating() const;

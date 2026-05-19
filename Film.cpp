@@ -16,6 +16,10 @@ void Film::play() const{
     std::cout << "-> Ruleaza filmul: '" << titlu << "' (" << durata << " min). Aseaza-te comod!\n";
 }
 
+std::shared_ptr<ContinutVideo> Film::clone() const {
+    return std::make_shared<Film>(*this); // Apelează constructorul de copiere generat de C++
+}
+
 void Film::afisare(std::ostream& os) const {
     os << "[FILM] " << titlu << " (Gen: " << gen << ") | Nota: " << getRating() 
        << " | Durata: " << durata << " min | Varsta Minima: " << varstaMinima << "+\n";

@@ -5,6 +5,7 @@
 #include "Serial.h"
 #include "Utilizator.h"
 #include "Exceptii.h"
+#include "Documentar.h"
 
 int main() {
     std::cout << "=== INITIALIZARE NETFLIX PLATFORM ===\n\n";
@@ -109,6 +110,18 @@ int main() {
     user1.cautaGen("Sci-Fi");
     user1.cautaGen("Horror"); // Nu va gasi nimic
     user1.recomandaTop();
+
+    // 11. Testare documentar
+    std::cout << "\n>>> TESTAARE DOCUMENTAR <<<\n";
+    auto doc1 = std::make_shared<Documentar>("Planet Earth", "Natura", "BBC", 50, "Animale", 0);
+    std::cout << "Subiect documentar: " << doc1->getSubiect() << "\n";
+
+    // Testam Clone (Constructor Virtual)
+    auto docClonat = doc1->clone();
+    std::cout << "Am clonat cu succes: " << docClonat->getTitlu() << "\n";
+
+    // Testam Atributul Static
+    std::cout << "Pana acum s-au creat in memorie " << ContinutVideo::getNumarTotalContinut() << " obiecte video.\n";
 
     return 0;
 }
