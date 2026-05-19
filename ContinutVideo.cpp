@@ -19,13 +19,11 @@ void ContinutVideo::adaugaRecenzie(int nota) {
 double ContinutVideo::getRating() const {
     if (notePrimite.empty()) return 0.0;
     double suma = 0.0;
-    for (size_t i = 0; i < notePrimite.size(); ++i) { 
-        suma += notePrimite[i]; 
-    }
+    for (int nota : notePrimite) suma += nota;
     return suma / static_cast<double>(notePrimite.size());
 }
 
 std::ostream& operator<<(std::ostream& os, const ContinutVideo& cv) {
-    cv.afiseazaDetalii(os);
+    cv.afisare(os);
     return os;
 }

@@ -6,12 +6,13 @@ private:
     int durata;
 
 public:
-    explicit Film(const std::string& t = "Fara titlu", const std::string& g = "Necunoscut",
-                  const std::string& d = "Fara descriere", int durata = 0, int v = 0);
+    Film(std::string t, std::string g, std::string d, int durata, int v);
     ~Film() override = default;
 
-    [[nodiscard]] int getDurata() const;
+    void play() const override;
+    int getTimpRamas() const override;
+    int getTimpVizionat() const override;
+    void afisare(std::ostream& os) const override;
 
-    void play() override;
-    void afiseazaDetalii(std::ostream& os) const override;
+    [[nodiscard]] int getDurata() const;
 };

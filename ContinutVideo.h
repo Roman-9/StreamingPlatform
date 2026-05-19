@@ -4,7 +4,7 @@
 #include <iostream>
 
 class ContinutVideo {
-protected: 
+protected:
     std::string titlu;
     std::string gen;
     std::string descriere;
@@ -12,9 +12,12 @@ protected:
     std::vector<int> notePrimite;
 
 public:
-    explicit ContinutVideo(std::string t = "Fara titlu", std::string g = "Necunoscut",
-                           std::string d = "Fara descriere", int v = 0);
+    ContinutVideo(std::string t, std::string g, std::string d, int v);
     virtual ~ContinutVideo() = default;
+
+    virtual void play() const = 0;
+    virtual int getTimpRamas() const = 0;
+    virtual int getTimpVizionat() const = 0;
 
     [[nodiscard]] const std::string& getTitlu() const;
     [[nodiscard]] const std::string& getGen() const;
@@ -24,8 +27,6 @@ public:
     void adaugaRecenzie(int nota);
     [[nodiscard]] double getRating() const;
 
-    virtual void play() = 0; 
-    virtual void afiseazaDetalii(std::ostream& os) const = 0;
-
     friend std::ostream& operator<<(std::ostream& os, const ContinutVideo& cv);
+    virtual void afisare(std::ostream& os) const = 0;
 };
