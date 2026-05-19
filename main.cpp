@@ -28,7 +28,6 @@ int main() {
 
     // Preluam utilizatorii
     Utilizator& user1 = platforma.getUtilizatori()[0];
-    Utilizator& userCopil = platforma.getUtilizatori()[1];
 
     // Testam setter si getteri pentru Utilizator
     user1.setPlan("Premium");
@@ -59,6 +58,7 @@ int main() {
         user1.adaugaInWatchlist(platforma.cautaContinutDupaTitlu("Shogun"));
 
         // User-ul copil incearca sa adauge un serial 16+
+        Utilizator& userCopil = platforma.getUtilizatori()[1];
         userCopil.adaugaInWatchlist(platforma.cautaContinutDupaTitlu("Shogun"));
     } catch (const LimitaVarstaException& e) {
         std::cout << "[EROARE PRINSA] Matei: " << e.what() << "\n";
