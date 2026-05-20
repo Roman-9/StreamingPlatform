@@ -126,9 +126,9 @@ int main() {
     std::cout << "Pana acum s-au creat in memorie " << ContinutVideo::getNumarTotalContinut() << " obiecte video.\n";
 
     // 14. LANSAM INTERFATA GRAFICA
-    std::cout << "\n[INFO] Lansam interfata grafica SFML...\n";
-    AplicatieGUI app(platforma);
-    app.ruleaza();
+    // std::cout << "\n[INFO] Lansam interfata grafica SFML...\n";
+    // AplicatieGUI app(platforma);
+    // app.ruleaza();
 
     return 0;
 
