@@ -78,6 +78,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         PlatformaStreaming.cpp
         Documentar.cpp
         AplicatieGUI.cpp
+        Teste.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
