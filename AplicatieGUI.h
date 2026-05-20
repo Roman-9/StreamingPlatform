@@ -1,18 +1,21 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "PlatformaStreaming.h"
-#include <memory>
+#include <memory> // Pentru std::unique_ptr
 
+namespace sf {
+    class RenderWindow;
+    class Font;
+}
 
 class AplicatieGUI {
 private:
-    sf::RenderWindow window;
+    std::unique_ptr<sf::RenderWindow> window;
+    std::unique_ptr<sf::Font> font;
     PlatformaStreaming& platforma;
-
-    sf::Font font;
 
 public:
     explicit AplicatieGUI(PlatformaStreaming& p);
+    ~AplicatieGUI();
     void ruleaza();
     void randeazaCatalog();
 };
