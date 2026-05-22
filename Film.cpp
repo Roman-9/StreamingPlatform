@@ -1,23 +1,27 @@
 #include "Film.h"
+#include <algorithm>
 
-Film::Film(std::string t, std::string g, std::string d, int durata, int v)
-    : ContinutVideo(std::move(t), std::move(g), std::move(d), v), durata(durata) {}
+Film::Film(std::string t, std::string g, std::string d, int durata, int v, std::string cp, std::string lv)
+    : ContinutVideo(std::move(t), std::move(g), std::move(d), v, std::move(cp), std::move(lv)), durata(durata) {}
 
-int Film::getDurata() const { 
-    return durata; 
-}
+int Film::getDurata() const { return durata; }
+
 int Film::getTimpRamas() const {
-    return durata;
+    // Daca a primit o nota, inseamna ca l-am vazut, deci mai avem 0 minute
+    return (notePrimite.empty()) ? durata : 0;
 }
+
 int Film::getTimpVizionat() const {
-    return durata;
+    // Timpul pierdut e 0 daca nu a fost evaluat
+    return (notePrimite.empty()) ? 0 : durata;
 }
-void Film::play() const{
-    std::cout << "-> Ruleaza filmul: '" << titlu << "' (" << durata << " min). Aseaza-te comod!\n";
+
+void Film::play() {
+    std::cout << "[BACKEND] Ruleaza filmul: '" << titlu << "' (" << durata << " min).\n";
 }
 
 std::shared_ptr<ContinutVideo> Film::clone() const {
-    return std::make_shared<Film>(*this); // Apelează constructorul de copiere generat de C++
+    return std::make_shared<Film>(*this); 
 }
 
 void Film::afisare(std::ostream& os) const {

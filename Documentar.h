@@ -6,17 +6,18 @@
 class Documentar : public ContinutVideo {
 private:
     int durata;
-    std::string subiectPrincipal;
+    std::string subiect;
 
 public:
-    Documentar(std::string t, std::string g, std::string d, int durata, std::string subiect, int v);
-    ~Documentar() override = default;
+    Documentar(std::string t, std::string g, std::string d, int durata, std::string subiect, int v, std::string cp = "", std::string lv = "");
 
-    void play() const override;
+    const std::string& getSubiect() const;
+    int getDurata() const;
+
+    void play() override;
     int getTimpRamas() const override;
     int getTimpVizionat() const override;
+
+    std::shared_ptr<ContinutVideo> clone() const override;
     void afisare(std::ostream& os) const override;
-    
-    [[nodiscard]] std::shared_ptr<ContinutVideo> clone() const override;
-    [[nodiscard]] const std::string& getSubiect() const;
 };

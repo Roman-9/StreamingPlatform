@@ -1,19 +1,15 @@
 #include <iostream>
 #include "PlatformaStreaming.h"
-#include "Teste.h"
+
 #include "AplicatieGUI.h"
 
 int main() {
     std::cout << "=== INITIALIZARE NETFLIX PLATFORM ===\n\n";
 
-    // 1. Initializare si Baza de Date
+    // 1. Initializam obiectul platformei legat de fisierul bazei de date
     PlatformaStreaming platforma("streaming.db");
-    platforma.incarcaCatalogDinDB();
 
-    // 2. Rulam toate testele de backend in consola
-    ruleazaTesteConsole(platforma);
-
-    // 3. LANSAM INTERFATA GRAFICA
+    // 2. Lansam interfata grafica
     std::cout << "\n[INFO] Lansam interfata grafica SFML...\n";
     AplicatieGUI app(platforma);
     app.ruleaza();

@@ -1,27 +1,21 @@
 #pragma once
 #include "ContinutVideo.h"
 #include <vector>
-#include <memory>
 
 class Serial : public ContinutVideo {
 private:
     std::vector<int> durateEpisoade;
-    size_t episodCurent;
-
+    int episodCurent;
 public:
-    Serial(std::string t, std::string g, std::string d, std::vector<int> durate, int v);
-    ~Serial() override = default;
-
-    void play() const override;
+    Serial(std::string t, std::string g, std::string d, std::vector<int> durate, int v, std::string cp = "", std::string lv = "");
+    void play() override;
     bool vizioneazaEpisod();
-
+    int getEpisodCurent() const;
     int getTimpRamas() const override;
     int getTimpVizionat() const override;
+    int getNumarEpisoade() const;
+    const std::vector<int>& getDurateEpisoade() const;
     void afisare(std::ostream& os) const override;
-
-    [[nodiscard]] int getNumarEpisoade() const;
-    [[nodiscard]] const std::vector<int>& getDurateEpisoade() const;
-
-    [[nodiscard]] std::string getDurateAsConversieString() const;
-    [[nodiscard]] std::shared_ptr<ContinutVideo> clone() const override;
+    std::string getDurateAsConversieString() const;
+    std::shared_ptr<ContinutVideo> clone() const override;
 };

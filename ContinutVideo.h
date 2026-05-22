@@ -10,29 +10,30 @@ protected:
     std::string gen;
     std::string descriere;
     int varstaMinima;
+    std::string calePoster;
+    std::string linkVizionare;
     std::vector<int> notePrimite;
     static int numarTotalContinut;
 
 public:
-    ContinutVideo(std::string t, std::string g, std::string d, int v);
-    virtual ~ContinutVideo() = default;
+ContinutVideo(std::string t, std::string g, std::string d, int v, std::string cp = "", std::string lv = "");    virtual ~ContinutVideo() = default;
 
-    virtual void play() const = 0;
-    virtual int getTimpRamas() const = 0;
-    virtual int getTimpVizionat() const = 0;
-
-    [[nodiscard]] const std::string& getTitlu() const;
-    [[nodiscard]] const std::string& getGen() const;
-    [[nodiscard]] const std::string& getDescriere() const;
-    [[nodiscard]] int getVarstaMinima() const;
-
-    [[nodiscard]] virtual std::shared_ptr<ContinutVideo> clone() const = 0;
-
+    const std::string& getTitlu() const;
+    const std::string& getGen() const;
+    const std::string& getDescriere() const;
+    int getVarstaMinima() const;
+    const std::string& getCalePoster() const { return calePoster; }
+    const std::string& getLinkVizionare() const { return linkVizionare; }
     static int getNumarTotalContinut();
 
     void adaugaRecenzie(int nota);
-    [[nodiscard]] double getRating() const;
+    double getRating() const;
+
+    virtual void play() = 0;
+    virtual int getTimpRamas() const = 0;
+    virtual int getTimpVizionat() const = 0;
+    virtual std::shared_ptr<ContinutVideo> clone() const = 0;
+    virtual void afisare(std::ostream& os) const = 0;
 
     friend std::ostream& operator<<(std::ostream& os, const ContinutVideo& cv);
-    virtual void afisare(std::ostream& os) const = 0;
 };

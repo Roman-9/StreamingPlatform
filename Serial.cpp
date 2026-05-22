@@ -1,18 +1,26 @@
 #include "Serial.h"
 #include <sstream>
+#include <algorithm>
 
-Serial::Serial(std::string t, std::string g, std::string d, std::vector<int> durate, int v)
-    : ContinutVideo(std::move(t), std::move(g), std::move(d), v), durateEpisoade(std::move(durate)), episodCurent(0) {}
+Serial::Serial(std::string t, std::string g, std::string d, std::vector<int> durate, int v, std::string cp, std::string lv)
+    : ContinutVideo(std::move(t), std::move(g), std::move(d), v, std::move(cp), std::move(lv)), durateEpisoade(std::move(durate)), episodCurent(0) {}
 
-void Serial::play() const { std::cout << "[PLAY SERIAL] Ruleaza serialul: " << titlu << "\n"; }
+void Serial::play() {
+    if (vizioneazaEpisod()) {
+        std::cout << "[BACKEND] Ai vazut episodul " << episodCurent << " din " << titlu << "!\n";
+    } else {
+        std::cout << "[BACKEND] Ai terminat deja acest serial!\n";
+    }
+}
 
 bool Serial::vizioneazaEpisod() {
     if (episodCurent < durateEpisoade.size()) {
-        episodCurent++;
-        return true;
+        episodCurent++; return true;
     }
     return false;
 }
+
+int Serial::getEpisodCurent() const { return episodCurent; }
 
 int Serial::getTimpRamas() const {
     int timp = 0;
@@ -22,21 +30,17 @@ int Serial::getTimpRamas() const {
 
 int Serial::getTimpVizionat() const {
     int timp = 0;
-    for (size_t i = 0; i < episodCurent; ++i) timp += durateEpisoade[i];
+    for (size_t i = 0; i < static_cast<size_t>(episodCurent); ++i) timp += durateEpisoade[i];
     return timp;
 }
 
-int Serial::getNumarEpisoade() const {
-    return static_cast<int>(durateEpisoade.size());
-}
+int Serial::getNumarEpisoade() const { return static_cast<int>(durateEpisoade.size()); }
 
-const std::vector<int>& Serial::getDurateEpisoade() const {
-    return durateEpisoade;
-}
+const std::vector<int>& Serial::getDurateEpisoade() const { return durateEpisoade; }
 
 void Serial::afisare(std::ostream& os) const {
     os << "[SERIAL] " << titlu << " (gen: " << gen << ") | Nota: " << getRating()
-       << " | Progres: Ep. " << episodCurent << " din " << durateEpisoade.size() << "\nDescriere: " << descriere << "\n";
+       << " | Progres: Ep. " << episodCurent << " din " << durateEpisoade.size() << "\n";
 }
 
 std::string Serial::getDurateAsConversieString() const {

@@ -21,47 +21,79 @@ void Utilizator::stergeDinWatchlistDupaTitlu(const std::string& titluCautat) {
     watchlistActiva.stergeDupaTitlu(titluCautat);
 }
 
-void Utilizator::marcheazaCaVazut(const std::string& titlu) {
-    if (watchlistActiva.mutaInIstoric(titlu, istoricVizionari)) {
-        std::cout << "[INFO] '" << titlu << "' a fost mutat in Istoric.\n";
+void Utilizator::marcheazaCaVazut(const std::shared_ptr<ContinutVideo>& cv) {
+    if (!cv) return;
+    try {
+        watchlistActiva.stergeDupaTitlu(cv->getTitlu());
+    } catch (...) {}
+
+    if (!istoricVizionari.gasesteDupaTitlu(cv->getTitlu())) {
+        istoricVizionari.adauga(cv);
+        std::cout << "[INFO] '" << cv->getTitlu() << "' a fost mutat in Istoric.\n";
     }
 }
 
 void Utilizator::uitaTeLaEpisod(const std::string& titluSerial) {
     auto cv = watchlistActiva.gasesteDupaTitlu(titluSerial);
+    if (!cv) cv = istoricVizionari.gasesteDupaTitlu(titluSerial);
+
     if (cv) {
         if (auto serial = std::dynamic_pointer_cast<Serial>(cv)) {
-            if (serial->vizioneazaEpisod()) std::cout << "[INFO] Ai vazut un episod nou din " << titluSerial << "\n";
-            else std::cout << "[INFO] Ai terminat serialul!\n";
+            serial->play();
         }
     }
 }
 
 void Utilizator::acordaNota(const std::string& titlu, int nota) {
     auto cv = istoricVizionari.gasesteDupaTitlu(titlu);
-    if (!cv) cv = watchlistActiva.gasesteDupaTitlu(titlu);
-    if (cv) cv->adaugaRecenzie(nota);
+
+    if (!cv) {
+        throw RecenzieFaraVizionareException(titlu);
+    }
+
+    cv->adaugaRecenzie(nota);
 }
 
-void Utilizator::afiseazaTimpRamas() const {
-    std::cout << "Timp ramas: " << watchlistActiva.calculeazaDurataTotalaRamas() << " minute.\n";
+int Utilizator::getTimpTotalVizionat() const {
+    int total = 0;
+    // Parcurgem istoricul de vizionari polimorfic
+    for (const auto& cv : istoricVizionari.getLista()) {
+        total += cv->getTimpVizionat();
+    }
+    return total;
 }
 
-void Utilizator::afiseazaStatistici() const {
-    std::cout << "Timp pierdut (vizionat): " << istoricVizionari.calculeazaTimpPierdut() << " minute.\n";
+int Utilizator::getTimpRamasWatchlist() const {
+    int total = 0;
+    // Parcurgem elementele din Watchlist pentru a vedea cat timp a mai ramas de vizionat
+    for (const auto& cv : getWatchlist().getLista()) {
+        total += cv->getTimpRamas();
+    }
+    return total;
 }
 
-void Utilizator::cautaGen(const std::string& gen) const {
-    watchlistActiva.afiseazaDupaGen(gen);
+std::string Utilizator::getTopRecomandare(const std::vector<std::shared_ptr<ContinutVideo>>& catalogGlobal) const {
+    std::shared_ptr<ContinutVideo> topPick = nullptr;
+    double maxRating = -1.0;
+
+    for (const auto& cv : catalogGlobal) {
+        // Algoritm: cautam titlul cu cel mai mare rating pe care utilizatorul NU l-a vazut inca
+        if (!istoricVizionari.gasesteDupaTitlu(cv->getTitlu())) {
+            if (cv->getRating() > maxRating) {
+                maxRating = cv->getRating();
+                topPick = cv;
+            }
+        }
+    }
+
+    if (topPick) {
+        return topPick->getTitlu() + " (" + topPick->getGen() + ")";
+    }
+    return "Ai vizionat tot catalogul!";
 }
 
-void Utilizator::recomandaTop() const {
-    watchlistActiva.afiseazaTopRating();
-}
 
-const Watchlist& Utilizator::getWatchlist() const {
-    return watchlistActiva;
-}
+const Watchlist& Utilizator::getWatchlist() const { return watchlistActiva; }
 
 std::ostream& operator<<(std::ostream& os, const Utilizator& user) {
     os << "User: " << user.nume << " | Plan: " << user.plan << "\n";

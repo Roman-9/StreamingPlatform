@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 #include <vector>
 #include <memory>
+#include <string>
 #include "ContinutVideo.h"
 #include "Utilizator.h"
 
@@ -13,13 +13,13 @@ private:
 
 public:
     explicit PlatformaStreaming(std::string path);
-    ~PlatformaStreaming() = default;
-
     void adaugaContinutInCatalog(const std::shared_ptr<ContinutVideo>& cv);
+
+    void stergeContinutDinCatalog(const std::string& titluCautat); // NOU
+
     void incarcaCatalogDinDB();
     void inregistreazaUtilizator(const std::string& nume, int varsta);
-
-    [[nodiscard]] std::shared_ptr<ContinutVideo> cautaContinutDupaTitlu(const std::string& titlu) const;
-    [[nodiscard]] const std::vector<std::shared_ptr<ContinutVideo>>& getCatalogGlobal() const;
-    [[nodiscard]] std::vector<Utilizator>& getUtilizatori();
+    std::shared_ptr<ContinutVideo> cautaContinutDupaTitlu(const std::string& titlu) const;
+    const std::vector<std::shared_ptr<ContinutVideo>>& getCatalogGlobal() const;
+    std::vector<Utilizator>& getUtilizatori();
 };

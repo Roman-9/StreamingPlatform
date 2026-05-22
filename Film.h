@@ -1,20 +1,15 @@
 #pragma once
 #include "ContinutVideo.h"
-#include <memory>
 
 class Film : public ContinutVideo {
 private:
     int durata;
-
 public:
-    Film(std::string t, std::string g, std::string d, int durata, int v);
-    ~Film() override = default;
-
-    void play() const override;
+    Film(std::string t, std::string g, std::string d, int durata, int v, std::string cp = "", std::string lv = "");
+    int getDurata() const;
     int getTimpRamas() const override;
     int getTimpVizionat() const override;
+    void play() override;
+    std::shared_ptr<ContinutVideo> clone() const override;
     void afisare(std::ostream& os) const override;
-
-    [[nodiscard]] int getDurata() const;
-    [[nodiscard]] std::shared_ptr<ContinutVideo> clone() const override;
 };
