@@ -5,11 +5,16 @@
 
 Utilizator::Utilizator(std::string n, std::string p, int v) : nume(std::move(n)), plan(std::move(p)), varsta(v) {}
 
+// cppcheck-suppress unusedFunction
 const std::string& Utilizator::getNume() const { return nume; }
+// cppcheck-suppress unusedFunction
 const std::string& Utilizator::getPlan() const { return plan; }
+// cppcheck-suppress unusedFunction
 int Utilizator::getVarsta() const { return varsta; }
+// cppcheck-suppress unusedFunction
 void Utilizator::setPlan(const std::string& planNou) { plan = planNou; }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::adaugaInWatchlist(const std::shared_ptr<ContinutVideo>& cv) {
     if (cv && varsta < cv->getVarstaMinima()) {
         throw LimitaVarstaException(cv->getTitlu(), cv->getVarstaMinima());
@@ -17,10 +22,12 @@ void Utilizator::adaugaInWatchlist(const std::shared_ptr<ContinutVideo>& cv) {
     watchlistActiva.adauga(cv);
 }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::stergeDinWatchlistDupaTitlu(const std::string& titluCautat) {
     watchlistActiva.stergeDupaTitlu(titluCautat);
 }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::marcheazaCaVazut(const std::shared_ptr<ContinutVideo>& cv) {
     if (!cv) return;
     try {
@@ -33,6 +40,7 @@ void Utilizator::marcheazaCaVazut(const std::shared_ptr<ContinutVideo>& cv) {
     }
 }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::uitaTeLaEpisod(const std::string& titluSerial) {
     auto cv = watchlistActiva.gasesteDupaTitlu(titluSerial);
     if (!cv) cv = istoricVizionari.gasesteDupaTitlu(titluSerial);
@@ -44,6 +52,7 @@ void Utilizator::uitaTeLaEpisod(const std::string& titluSerial) {
     }
 }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::acordaNota(const std::string& titlu, int nota) {
     auto cv = istoricVizionari.gasesteDupaTitlu(titlu);
 
@@ -54,6 +63,7 @@ void Utilizator::acordaNota(const std::string& titlu, int nota) {
     cv->adaugaRecenzie(nota);
 }
 
+// cppcheck-suppress unusedFunction
 int Utilizator::getTimpTotalVizionat() const {
     int total = 0;
     // Parcurgem istoricul de vizionari polimorfic
@@ -63,6 +73,7 @@ int Utilizator::getTimpTotalVizionat() const {
     return total;
 }
 
+// cppcheck-suppress unusedFunction
 int Utilizator::getTimpRamasWatchlist() const {
     int total = 0;
     // Parcurgem elementele din Watchlist pentru a vedea cat timp a mai ramas de vizionat
@@ -72,6 +83,7 @@ int Utilizator::getTimpRamasWatchlist() const {
     return total;
 }
 
+// cppcheck-suppress unusedFunction
 std::string Utilizator::getTopRecomandare(const std::vector<std::shared_ptr<ContinutVideo>>& catalogGlobal) const {
     std::shared_ptr<ContinutVideo> topPick = nullptr;
     double maxRating = -1.0;

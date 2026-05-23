@@ -42,54 +42,6 @@ std::shared_ptr<ContinutVideo> Watchlist::gasesteDupaTitlu(const std::string& ti
     }
     return nullptr;
 }
-
-bool Watchlist::mutaInIstoric(const std::string& titluCautat, Watchlist& istoricDestinatie) {
-    for (auto it = lista.begin(); it != lista.end(); ++it) {
-        if ((*it)->getTitlu() == titluCautat) {
-            istoricDestinatie.adauga(*it);
-            lista.erase(it); return true;
-        }
-    }
-    return false;
-}
-
-void Watchlist::afiseazaDupaGen(const std::string& genCautat) const {
-    std::cout << "--- Rezultate pentru genul: " << genCautat << " ---\n";
-    bool gasit = false;
-    for (const auto& cv : lista) {
-        if (cv->getGen() == genCautat) {
-            std::cout << *cv << "\n"; gasit = true;
-        }
-    }
-    if (!gasit) std::cout << "Nu s-au gasit elemente din acest gen.\n";
-}
-
-void Watchlist::afiseazaTopRating() const {
-    double maxRating = -1.0; std::string topTitlu = "";
-    for (const auto& cv : lista) {
-        if (cv->getRating() > maxRating) {
-            maxRating = cv->getRating(); topTitlu = cv->getTitlu();
-        }
-    }
-    if (maxRating != -1.0) {
-        std::cout << "[TOP] Cel mai bine cotat titlu este: '" << topTitlu << "' cu nota " << maxRating << "\n";
-    } else {
-        std::cout << "Lista este goala sau nu exista recenzii.\n";
-    }
-}
-
-int Watchlist::calculeazaDurataTotalaRamas() const {
-    int timp = 0;
-    for (const auto& cv : lista) timp += cv->getTimpRamas();
-    return timp;
-}
-
-int Watchlist::calculeazaTimpPierdut() const {
-    int timp = 0;
-    for (const auto& cv : lista) timp += cv->getTimpVizionat();
-    return timp;
-}
-
 const std::vector<std::shared_ptr<ContinutVideo>>& Watchlist::getLista() const { return lista; }
 
 std::ostream& operator<<(std::ostream& os, const Watchlist& wl) {

@@ -8,6 +8,8 @@ private:
     int durata;
     std::string subiect;
 
+protected:
+    void do_afisare(std::ostream& os) const override;
 public:
     Documentar(std::string t, std::string g, std::string d, int durata, std::string subiect, int v, std::string cp = "", std::string lv = "");
 
@@ -19,5 +21,4 @@ public:
     int getTimpVizionat() const override;
 
     std::shared_ptr<ContinutVideo> clone() const override;
-    void afisare(std::ostream& os) const override;
 };

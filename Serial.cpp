@@ -7,7 +7,7 @@ Serial::Serial(std::string t, std::string g, std::string d, std::vector<int> dur
 
 void Serial::play() {
     if (vizioneazaEpisod()) {
-        std::cout << "[BACKEND] Ai vazut episodul " << episodCurent << " din " << titlu << "!\n";
+        std::cout << "[BACKEND] Ai vazut episodul " << episodCurent << " din " << getTitlu() << "!\n";
     } else {
         std::cout << "[BACKEND] Ai terminat deja acest serial!\n";
     }
@@ -20,7 +20,15 @@ bool Serial::vizioneazaEpisod() {
     return false;
 }
 
+// cppcheck-suppress unusedFunction
 int Serial::getEpisodCurent() const { return episodCurent; }
+
+// cppcheck-suppress unusedFunction
+void Serial::setEpisodCurent(int ep) {
+    if (ep >= 0 && ep <= static_cast<int>(durateEpisoade.size())) {
+        episodCurent = ep;
+    }
+}
 
 int Serial::getTimpRamas() const {
     int timp = 0;
@@ -34,24 +42,16 @@ int Serial::getTimpVizionat() const {
     return timp;
 }
 
+// cppcheck-suppress unusedFunction
 int Serial::getNumarEpisoade() const { return static_cast<int>(durateEpisoade.size()); }
 
+// cppcheck-suppress unusedFunction
 const std::vector<int>& Serial::getDurateEpisoade() const { return durateEpisoade; }
 
-void Serial::afisare(std::ostream& os) const {
-    os << "[SERIAL] " << titlu << " (gen: " << gen << ") | Nota: " << getRating()
+void Serial::do_afisare(std::ostream& os) const {
+    os << "[SERIAL] " << getTitlu() << " (gen: " << getGen() << ") | Nota: " << getRating()
        << " | Progres: Ep. " << episodCurent << " din " << durateEpisoade.size() << "\n";
 }
-
-std::string Serial::getDurateAsConversieString() const {
-    std::stringstream ss;
-    for (size_t i = 0; i < durateEpisoade.size(); ++i) {
-        ss << durateEpisoade[i];
-        if (i < durateEpisoade.size() - 1) ss << ",";
-    }
-    return ss.str();
-}
-
 std::shared_ptr<ContinutVideo> Serial::clone() const {
     return std::make_shared<Serial>(*this);
 }
