@@ -14,7 +14,7 @@ void Serial::play() {
 }
 
 bool Serial::vizioneazaEpisod() {
-    if (episodCurent < durateEpisoade.size()) {
+    if (static_cast<size_t>(episodCurent) < durateEpisoade.size()) {
         episodCurent++; return true;
     }
     return false;
