@@ -732,6 +732,12 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 }
 
 void AplicatieGUI::ruleaza() {
+    bool isCI = false;
+    if (const char* env = std::getenv("CI")) {
+        isCI = (std::string(env) == "true" || std::string(env) == "1");
+    }
+    int frameCount = 0;
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) { window.close(); }
@@ -752,6 +758,13 @@ void AplicatieGUI::ruleaza() {
         else if (stareCurenta == StareAplicatie::AdminPanel) randeazaPanouAdmin();
 
         window.display();
+
+        if (isCI) {
+            frameCount++;
+            if (frameCount >= 10) {
+                window.close();
+            }
+        }
     }
 }
 
