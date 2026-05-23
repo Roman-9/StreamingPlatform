@@ -240,8 +240,10 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     ratingTxt.setStyle(sf::Text::Bold); ratingTxt.setPosition({contentLeftX, startY + 80.f}); window.draw(ratingTxt);
 
     std::string infoStr = "Gen: " + continutSelectat->getGen() + "  |  " + std::to_string(continutSelectat->getVarstaMinima()) + "+";
-    if (auto doc = std::dynamic_pointer_cast<Documentar>(continutSelectat)) {
-        infoStr += "  |  Subiect: " + doc->getSubiect();
+    if (auto film = std::dynamic_pointer_cast<Film>(continutSelectat)) {
+        infoStr += "  |  Durata: " + std::to_string(film->getDurata()) + " min";
+    } else if (auto doc = std::dynamic_pointer_cast<Documentar>(continutSelectat)) {
+        infoStr += "  |  Subiect: " + doc->getSubiect() + "  |  Durata: " + std::to_string(doc->getDurata()) + " min";
     }
     sf::Text infoTxt(font);
     infoTxt.setString(infoStr); infoTxt.setCharacterSize(20);
@@ -311,12 +313,23 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     if (auto serial = std::dynamic_pointer_cast<Serial>(continutSelectat)) {
         float episodesRightX = 800.f;
         sf::Text epTitlu(font);
-        epTitlu.setString("Ghid Episoade:");
+        epTitlu.setString("Ghid Episoade (" + std::to_string(serial->getNumarEpisoade()) + " episoade):");
         epTitlu.setCharacterSize(20); epTitlu.setFillColor(sf::Color(229, 9, 20));
         epTitlu.setPosition({episodesRightX, startY + 170.f}); window.draw(epTitlu);
 
+        sf::Text progressTxt(font);
+        std::string progStr;
+        if (serial->getEpisodCurent() < serial->getNumarEpisoade()) {
+            progStr = "Episodul urmator la vizionare: Ep. " + std::to_string(serial->getEpisodCurent() + 1);
+        } else {
+            progStr = "Serial finalizat!";
+        }
+        progressTxt.setString(progStr);
+        progressTxt.setCharacterSize(16); progressTxt.setFillColor(sf::Color(200, 200, 200));
+        progressTxt.setPosition({episodesRightX, startY + 130.f}); window.draw(progressTxt);
+
         auto durate = serial->getDurateEpisoade(); float epY = startY + 210.f;
-        int epSesiuneVazut = progresSeriale[serial->getTitlu()];
+        int epSesiuneVazut = serial->getEpisodCurent();
 
         for(size_t i = 0; i < std::min<size_t>(durate.size(), 3); i++) {
             sf::RectangleShape epRow({450.f, 35.f});
@@ -469,6 +482,12 @@ void AplicatieGUI::randeazaPanouAdmin() {
     sf::Text mTxt(font); mTxt.setString("TESTEAZA EXCEPTII DB");
     mTxt.setCharacterSize(16); mTxt.setFillColor(sf::Color::Black); mTxt.setStyle(sf::Text::Bold);
     mTxt.setPosition({60.f, 525.f}); window.draw(mTxt);
+
+    sf::RectangleShape delBtn({400.f, 50.f}); delBtn.setFillColor(sf::Color(180, 20, 20));
+    delBtn.setPosition({40.f, 580.f}); window.draw(delBtn);
+    sf::Text delTxt(font); delTxt.setString("Sterge 'The Batman' din Catalog");
+    delTxt.setCharacterSize(16); delTxt.setFillColor(sf::Color::White); delTxt.setStyle(sf::Text::Bold);
+    delTxt.setPosition({60.f, 595.f}); window.draw(delTxt);
 }
 
 
@@ -615,9 +634,10 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
                     if (user.getVarsta() < serial->getVarstaMinima()) {
                         mesajStatus = "[BLOCAT] Acest serial contine scene restrictionate varstei tale!"; return;
                     }
-                    user.uitaTeLaEpisod(serial->getTitlu());
-                    int urmat = progresSeriale[serial->getTitlu()];
-                    if (static_cast<size_t>(urmat) <= i) progresSeriale[serial->getTitlu()] = static_cast<int>(i) + 1;
+                    // Actualizam episodul curent in obiectul serial direct
+                    serial->setEpisodCurent(static_cast<int>(i) + 1);
+                    user.marcheazaCaVazut(serial);
+
                     auto& hist = istoricUtilizatori[user.getNume()];
                     std::string labelEp = serial->getTitlu() + " (Vizionat Ep. " + std::to_string(i + 1) + ")";
                     if (std::find(hist.begin(), hist.end(), labelEp) == hist.end()) hist.push_back(labelEp);
@@ -697,6 +717,17 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             }
             return;
         }
+
+        if (sf::FloatRect({40.f, 580.f}, {400.f, 50.f}).contains(coordMouse)) {
+            try {
+                platforma.stergeContinutDinCatalog("The Batman");
+                mesajStatus = "[ADMIN] Filmul 'The Batman' a fost sters cu succes.";
+            }
+            catch (const StreamingException& e) {
+                mesajStatus = std::string("[ADMIN EROARE] ") + e.what();
+            }
+            return;
+        }
     }
 }
 
@@ -722,4 +753,10 @@ void AplicatieGUI::ruleaza() {
 
         window.display();
     }
+}
+
+// cppcheck-suppress unusedFunction
+std::ostream& operator<<(std::ostream& os, const AplicatieGUI& gui) {
+    os << "AplicatieGUI (stareCurenta: " << static_cast<int>(gui.stareCurenta) << ")";
+    return os;
 }

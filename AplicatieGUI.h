@@ -36,7 +36,6 @@ private:
     std::map<std::string, sf::Texture> postere;
     std::map<std::string, std::vector<std::string>> istoricUtilizatori;
     std::map<std::string, int> noteAcordate;
-    std::map<std::string, int> progresSeriale;
 
     void incarcaPostere();
     void randeazaBaraNavigatie();
@@ -52,4 +51,6 @@ private:
 public:
     explicit AplicatieGUI(PlatformaStreaming& p);
     void ruleaza();
+
+    friend std::ostream& operator<<(std::ostream& os, const AplicatieGUI& gui);
 };
