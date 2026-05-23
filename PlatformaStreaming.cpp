@@ -10,12 +10,14 @@
 
 PlatformaStreaming::PlatformaStreaming(std::string path) : dbPath(std::move(path)) {}
 
+// cppcheck-suppress unusedFunction
 void PlatformaStreaming::adaugaContinutInCatalog(const std::shared_ptr<ContinutVideo>& cv) {
     if (cv) {
         catalogGlobal.push_back(cv);
     }
 }
 
+// cppcheck-suppress unusedFunction
 void PlatformaStreaming::incarcaCatalogDinDB() {
     sqlite3* db;
     int rc = sqlite3_open(dbPath.c_str(), &db);
@@ -71,10 +73,12 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 }
+// cppcheck-suppress unusedFunction
 void PlatformaStreaming::inregistreazaUtilizator(const std::string& nume, int varsta) {
     utilizatori.push_back(Utilizator(nume, "Free", varsta));
 }
 
+// cppcheck-suppress unusedFunction
 std::shared_ptr<ContinutVideo> PlatformaStreaming::cautaContinutDupaTitlu(const std::string& titlu) const {
     for (const auto& cv : catalogGlobal) {
         if (cv->getTitlu() == titlu) {
@@ -84,14 +88,17 @@ std::shared_ptr<ContinutVideo> PlatformaStreaming::cautaContinutDupaTitlu(const 
     throw TitluInexistentException(titlu);
 }
 
+// cppcheck-suppress unusedFunction
 const std::vector<std::shared_ptr<ContinutVideo>>& PlatformaStreaming::getCatalogGlobal() const {
     return catalogGlobal;
 }
 
+// cppcheck-suppress unusedFunction
 std::vector<Utilizator>& PlatformaStreaming::getUtilizatori() {
     return utilizatori;
 }
 
+// cppcheck-suppress unusedFunction
 void PlatformaStreaming::stergeContinutDinCatalog(const std::string& titluCautat) {
     auto it = std::remove_if(catalogGlobal.begin(), catalogGlobal.end(),
         [&titluCautat](const std::shared_ptr<ContinutVideo>& cv) {
@@ -103,4 +110,11 @@ void PlatformaStreaming::stergeContinutDinCatalog(const std::string& titluCautat
     } else {
         throw TitluInexistentException("Filmul '" + titluCautat + "' nu a fost gasit pentru stergere!");
     }
+}
+
+// cppcheck-suppress unusedFunction
+std::ostream& operator<<(std::ostream& os, const PlatformaStreaming& ps) {
+    os << "Platforma Streaming (Catalog: " << ps.catalogGlobal.size()
+       << " titluri, " << ps.utilizatori.size() << " utilizatori)";
+    return os;
 }
