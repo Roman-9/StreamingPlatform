@@ -69,15 +69,15 @@ target_include_directories(sqlite3 PUBLIC ${sqlite3_SOURCE_DIR})
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
-        ContinutVideo.cpp
-        Film.cpp
-        Serial.cpp
-        Exceptii.cpp
-        Watchlist.cpp
-        Utilizator.cpp
-        PlatformaStreaming.cpp
-        Documentar.cpp
-        AplicatieGUI.cpp
+        src/ContinutVideo.cpp
+        src/Film.cpp
+        src/Serial.cpp
+        src/Exceptii.cpp
+        src/Watchlist.cpp
+        src/Utilizator.cpp
+        src/PlatformaStreaming.cpp
+        src/Documentar.cpp
+        src/AplicatieGUI.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
