@@ -55,3 +55,11 @@ void Serial::do_afisare(std::ostream& os) const {
 std::shared_ptr<ContinutVideo> Serial::clone() const {
     return std::make_shared<Serial>(*this);
 }
+
+bool Serial::matchesFilter(FiltruCatalog filtru) const {
+    return filtru == FiltruCatalog::Toate || filtru == FiltruCatalog::Seriale;
+}
+
+std::string Serial::getDetaliiSpecifice() const {
+    return "Ghid Episoade (" + std::to_string(getNumarEpisoade()) + " episoade)";
+}

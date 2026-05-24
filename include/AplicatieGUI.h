@@ -14,12 +14,6 @@ enum class StareAplicatie {
     AdminPanel
 };
 
-enum class FiltruCatalog {
-    Toate,
-    Filme,
-    Seriale,
-    Documentare
-};
 
 class AplicatieGUI {
 private:

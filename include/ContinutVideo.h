@@ -4,6 +4,13 @@
 #include <iostream>
 #include <memory>
 
+enum class FiltruCatalog {
+    Toate,
+    Filme,
+    Seriale,
+    Documentare
+};
+
 class ContinutVideo {
 private:
     std::string titlu;
@@ -42,6 +49,16 @@ public:
     virtual int getTimpVizionat() const = 0;
     virtual std::shared_ptr<ContinutVideo> clone() const = 0;
     void afisare(std::ostream& os) const;
+
+    virtual bool matchesFilter(FiltruCatalog filtru) const;
+    virtual std::string getDetaliiSpecifice() const = 0;
+    virtual bool estePremium() const { return false; }
+
+    virtual bool areEpisoade() const { return false; }
+    virtual int getEpisodCurent() const { return 0; }
+    virtual void setEpisodCurent(int ep);
+    virtual int getNumarEpisoade() const { return 0; }
+    virtual const std::vector<int>& getDurateEpisoade() const;
 
     friend std::ostream& operator<<(std::ostream& os, const ContinutVideo& cv);
 };

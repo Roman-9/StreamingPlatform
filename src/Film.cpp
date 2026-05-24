@@ -29,3 +29,11 @@ void Film::do_afisare(std::ostream& os) const {
     os << "[FILM] " << getTitlu() << " (Gen: " << getGen() << ") | Nota: " << getRating() 
        << " | Durata: " << durata << " min | Varsta Minima: " << getVarstaMinima() << "+\n";
 }
+
+bool Film::matchesFilter(FiltruCatalog filtru) const {
+    return filtru == FiltruCatalog::Toate || filtru == FiltruCatalog::Filme;
+}
+
+std::string Film::getDetaliiSpecifice() const {
+    return "Durata: " + std::to_string(durata) + " min";
+}

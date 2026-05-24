@@ -47,7 +47,10 @@ void Utilizator::uitaTeLaEpisod(const std::string& titluSerial) {
 
     if (cv) {
         if (auto serial = std::dynamic_pointer_cast<Serial>(cv)) {
+            serial->vizioneazaEpisod();
             serial->play();
+        } else {
+            cv->play();
         }
     }
 }

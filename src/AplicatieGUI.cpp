@@ -149,13 +149,7 @@ void AplicatieGUI::randeazaCatalog() {
 
     int indexDesenat = 0;
     for (const auto& cv : catalog) {
-        bool eFilm = std::dynamic_pointer_cast<Film>(cv) != nullptr;
-        bool eSerial = std::dynamic_pointer_cast<Serial>(cv) != nullptr;
-        bool eDoc = std::dynamic_pointer_cast<Documentar>(cv) != nullptr;
-
-        if (filtruCurent == FiltruCatalog::Filme && !eFilm) continue;
-        if (filtruCurent == FiltruCatalog::Seriale && !eSerial) continue;
-        if (filtruCurent == FiltruCatalog::Documentare && !eDoc) continue;
+        if (!cv->matchesFilter(filtruCurent)) continue;
 
         int rand = indexDesenat / coloane; int col = indexDesenat % coloane;
         float x = startX + col * (cardWidth + spatiuX); float y = startY + rand * (cardHeight + spatiuY);
@@ -240,10 +234,9 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     ratingTxt.setStyle(sf::Text::Bold); ratingTxt.setPosition({contentLeftX, startY + 80.f}); window.draw(ratingTxt);
 
     std::string infoStr = "Gen: " + continutSelectat->getGen() + "  |  " + std::to_string(continutSelectat->getVarstaMinima()) + "+";
-    if (auto film = std::dynamic_pointer_cast<Film>(continutSelectat)) {
-        infoStr += "  |  Durata: " + std::to_string(film->getDurata()) + " min";
-    } else if (auto doc = std::dynamic_pointer_cast<Documentar>(continutSelectat)) {
-        infoStr += "  |  Subiect: " + doc->getSubiect() + "  |  Durata: " + std::to_string(doc->getDurata()) + " min";
+    std::string detaliiSpecifice = continutSelectat->getDetaliiSpecifice();
+    if (!detaliiSpecifice.empty()) {
+        infoStr += "  |  " + detaliiSpecifice;
     }
     sf::Text infoTxt(font);
     infoTxt.setString(infoStr); infoTxt.setCharacterSize(20);
@@ -310,17 +303,17 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     window.draw(dislikeTxt);
 
 
-    if (auto serial = std::dynamic_pointer_cast<Serial>(continutSelectat)) {
+    if (continutSelectat->areEpisoade()) {
         float episodesRightX = 800.f;
         sf::Text epTitlu(font);
-        epTitlu.setString("Ghid Episoade (" + std::to_string(serial->getNumarEpisoade()) + " episoade):");
+        epTitlu.setString("Ghid Episoade (" + std::to_string(continutSelectat->getNumarEpisoade()) + " episoade):");
         epTitlu.setCharacterSize(20); epTitlu.setFillColor(sf::Color(229, 9, 20));
         epTitlu.setPosition({episodesRightX, startY + 170.f}); window.draw(epTitlu);
 
         sf::Text progressTxt(font);
         std::string progStr;
-        if (serial->getEpisodCurent() < serial->getNumarEpisoade()) {
-            progStr = "Episodul urmator la vizionare: Ep. " + std::to_string(serial->getEpisodCurent() + 1);
+        if (continutSelectat->getEpisodCurent() < continutSelectat->getNumarEpisoade()) {
+            progStr = "Episodul urmator la vizionare: Ep. " + std::to_string(continutSelectat->getEpisodCurent() + 1);
         } else {
             progStr = "Serial finalizat!";
         }
@@ -328,8 +321,8 @@ void AplicatieGUI::randeazaPaginaDetalii() {
         progressTxt.setCharacterSize(16); progressTxt.setFillColor(sf::Color(200, 200, 200));
         progressTxt.setPosition({episodesRightX, startY + 130.f}); window.draw(progressTxt);
 
-        auto durate = serial->getDurateEpisoade(); float epY = startY + 210.f;
-        int epSesiuneVazut = serial->getEpisodCurent();
+        auto durate = continutSelectat->getDurateEpisoade(); float epY = startY + 210.f;
+        int epSesiuneVazut = continutSelectat->getEpisodCurent();
 
         for(size_t i = 0; i < std::min<size_t>(durate.size(), 3); i++) {
             sf::RectangleShape epRow({450.f, 35.f});
@@ -550,12 +543,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         float spatiuX = 30.f; float spatiuY = 40.f;
         int indexDesenat = 0;
         for (const auto& cv : catalog) {
-            bool eFilm = std::dynamic_pointer_cast<Film>(cv) != nullptr;
-            bool eSerial = std::dynamic_pointer_cast<Serial>(cv) != nullptr;
-            bool eDoc = std::dynamic_pointer_cast<Documentar>(cv) != nullptr;
-            if (filtruCurent == FiltruCatalog::Filme && !eFilm) continue;
-            if (filtruCurent == FiltruCatalog::Seriale && !eSerial) continue;
-            if (filtruCurent == FiltruCatalog::Documentare && !eDoc) continue;
+            if (!cv->matchesFilter(filtruCurent)) continue;
 
             int rand = indexDesenat / coloane; int col = indexDesenat % coloane;
             if (sf::FloatRect({startX + col * (cardWidth + spatiuX), startY + rand * (cardHeight + spatiuY)}, {cardWidth, cardHeight}).contains(coordMouse)) {
@@ -584,8 +572,8 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
                 mesajStatus = "[BLOCAT] Varsta insuficienta! Necesita minim " + std::to_string(continutSelectat->getVarstaMinima()) + " ani.";
                 return;
             }
-            if (std::dynamic_pointer_cast<Documentar>(continutSelectat) && user.getPlan() != "Premium") {
-                mesajStatus = "[LOCKED] Documentarele sunt exclusive pentru utilizatorii PREMIUM!";
+            if (continutSelectat->estePremium() && user.getPlan() != "Premium") {
+                mesajStatus = "[LOCKED] Acest continut este exclusiv pentru utilizatorii PREMIUM!";
                 return;
             }
             user.marcheazaCaVazut(continutSelectat);
@@ -626,20 +614,20 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             return;
         }
 
-        if (auto serial = std::dynamic_pointer_cast<Serial>(continutSelectat)) {
+        if (continutSelectat->areEpisoade()) {
             float episodesRightX = 800.f;
             float epY = 350.f;
-            for(size_t i = 0; i < std::min<size_t>(serial->getDurateEpisoade().size(), 3); i++) {
+            for(size_t i = 0; i < std::min<size_t>(continutSelectat->getDurateEpisoade().size(), 3); i++) {
                 if (sf::FloatRect({episodesRightX, epY}, {450.f, 35.f}).contains(coordMouse)) {
-                    if (user.getVarsta() < serial->getVarstaMinima()) {
+                    if (user.getVarsta() < continutSelectat->getVarstaMinima()) {
                         mesajStatus = "[BLOCAT] Acest serial contine scene restrictionate varstei tale!"; return;
                     }
                     // Actualizam episodul curent in obiectul serial direct
-                    serial->setEpisodCurent(static_cast<int>(i) + 1);
-                    user.marcheazaCaVazut(serial);
+                    continutSelectat->setEpisodCurent(static_cast<int>(i) + 1);
+                    user.marcheazaCaVazut(continutSelectat);
 
                     auto& hist = istoricUtilizatori[user.getNume()];
-                    std::string labelEp = serial->getTitlu() + " (Vizionat Ep. " + std::to_string(i + 1) + ")";
+                    std::string labelEp = continutSelectat->getTitlu() + " (Vizionat Ep. " + std::to_string(i + 1) + ")";
                     if (std::find(hist.begin(), hist.end(), labelEp) == hist.end()) hist.push_back(labelEp);
                     mesajStatus = "[SERIAL] Ai terminat de vizionat Episodul " + std::to_string(i + 1); return;
                 }

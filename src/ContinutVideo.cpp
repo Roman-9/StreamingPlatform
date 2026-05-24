@@ -50,6 +50,17 @@ void ContinutVideo::afisare(std::ostream& os) const {
     do_afisare(os);
 }
 
+bool ContinutVideo::matchesFilter(FiltruCatalog filtru) const {
+    return filtru == FiltruCatalog::Toate;
+}
+
+void ContinutVideo::setEpisodCurent(int) {}
+
+const std::vector<int>& ContinutVideo::getDurateEpisoade() const {
+    static const std::vector<int> empty;
+    return empty;
+}
+
 std::ostream& operator<<(std::ostream& os, const ContinutVideo& cv) {
     cv.afisare(os);
     return os;

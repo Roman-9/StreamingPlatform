@@ -1,6 +1,32 @@
-# Platformă de Streaming
+# Platformă de Streaming - Netflix C++ Clone
 
-Proiectul simulează funcționalitatea de backend a unei platforme de streaming (tip Netflix/Spotify). Aplicația gestionează un catalog multimedia complex, conturile utilizatorilor și sistemul de abonamente (Basic, Standard, Premium). Funcționalitățile principale permit utilizatorilor să se înregistreze, să caute conținut, să își creeze liste de favorite ("Watchlist") și să lase recenzii.
+Aplicația reprezintă o platformă modernă de streaming multimedia (tip Netflix), compusă dintr-un backend robust în C++23 legat la o bază de date SQLite3 și o interfață grafică interactivă realizată cu SFML.
+
+Aplicația oferă o experiență utilizator completă, gestionând:
+1. **Catalogul Multimedia**: O ierarhie polimorfică de conținut video (`Film` -> `Documentar` și `Serial` moștenind `ContinutVideo`), fiecare având detalii specifice, link-uri de vizionare, postere dinamice și logici specifice de rulare (cum ar fi rularea secvențială a episoadelor sau restricționarea documentarelor premium).
+2. **Utilizatori & Profile**: Management de profiluri cu avataruri personalizate în funcție de vârstă (Copil, Adolescent, Adult), istoricul vizionărilor și watchlist-uri active.
+3. **Statistici și Analytics live**: Calcularea automată a timpului total vizionat, a timpului rămas în watchlist și a recomandărilor inteligente (cel mai bun conținut nevizionat în funcție de rating-ul global).
+4. **Panoul de Administrare**: Permite adăugarea în timp real a noi elemente în catalog și testarea interactivă a excepțiilor sistemului (cum ar fi ștergerea de elemente inexistente).
+
+
+## Structura Bazei de Date (streaming.db)
+
+Proiectul folosește o bază de date locală SQLite, localizată în `assets/streaming.db`. Ea conține datele inițiale ale catalogului multimedia (filme, seriale și documentare) care sunt încărcate în memorie la pornirea aplicației.
+
+### Tabela `catalog`
+Baza de date conține o tabelă numită `catalog` cu următoarea structură:
+
+| Coloană | Tip | Descriere |
+|---|---|---|
+| `id` | `INTEGER PRIMARY KEY AUTOINCREMENT` | Identificator unic auto-generat. |
+| `tip` | `TEXT` | Tipul conținutului: `FILM`, `SERIAL` sau `DOCUMENTAR`. |
+| `titlu` | `TEXT` | Titlul unic al elementului multimedia. |
+| `gen` | `TEXT` | Genul conținutului (ex: Actiune, Thriller, Sport). |
+| `descriere` | `TEXT` | Scurtă descriere a acțiunii sau a subiectului. |
+| `valoare_specifica` | `TEXT` | Valoare specifică tipului de conținut: durata în minute pentru filme/documentare (ex: `170`), sau duratele episoadelor separate prin virgulă pentru seriale (ex: `55,62,58`). |
+| `varsta_minima` | `INTEGER` | Limita minimă de vârstă pentru vizionare (ex: `12`, `16`, `18`). |
+| `cale_poster` | `TEXT` | Calea relativă către imaginea posterului (ex: `assets/images/batman.jpg`). |
+| `link_vizionare` | `TEXT` | Link URL extern (YouTube) deschis la redare. |
 
 ### Folosiți template-ul corespunzător grupei voastre!
 

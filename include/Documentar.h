@@ -1,11 +1,10 @@
 #pragma once
-#include "ContinutVideo.h"
+#include "Film.h"
 #include <string>
 #include <memory>
 
-class Documentar : public ContinutVideo {
+class Documentar : public Film {
 private:
-    int durata;
     std::string subiect;
 
 protected:
@@ -14,11 +13,11 @@ public:
     Documentar(std::string t, std::string g, std::string d, int durata, std::string subiect, int v, std::string cp = "", std::string lv = "");
 
     const std::string& getSubiect() const;
-    int getDurata() const;
 
     void play() override;
-    int getTimpRamas() const override;
-    int getTimpVizionat() const override;
-
     std::shared_ptr<ContinutVideo> clone() const override;
+
+    bool matchesFilter(FiltruCatalog filtru) const override;
+    std::string getDetaliiSpecifice() const override;
+    bool estePremium() const override { return true; }
 };
