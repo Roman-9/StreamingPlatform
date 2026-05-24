@@ -22,5 +22,6 @@ public:
 
     bool matchesFilter(FiltruCatalog filtru) const override;
     std::string getDetaliiSpecifice() const override;
+    // cppcheck-suppress unusedFunction
     bool areEpisoade() const override { return true; }
 };

@@ -22,10 +22,12 @@ void Documentar::do_afisare(std::ostream& os) const {
        << " | Nota: " << getRating() << " | Durata: " << durata << " min | Varsta Minima: " << getVarstaMinima() << "+\n";
 }
 
+// cppcheck-suppress unusedFunction
 bool Documentar::matchesFilter(FiltruCatalog filtru) const {
     return filtru == FiltruCatalog::Toate || filtru == FiltruCatalog::Documentare;
 }
 
+// cppcheck-suppress unusedFunction
 std::string Documentar::getDetaliiSpecifice() const {
     return "Subiect: " + subiect + "  |  Durata: " + std::to_string(durata) + " min";
 }
