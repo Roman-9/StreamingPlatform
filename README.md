@@ -1,9 +1,9 @@
 # Platformă de Streaming - Netflix C++ Clone
 
-Aplicația reprezintă o platformă modernă de streaming multimedia (tip Netflix), compusă dintr-un backend robust în C++23 legat la o bază de date SQLite3 și o interfață grafică interactivă realizată cu SFML.
+Aplicația reprezintă o platformă modernă de streaming multimedia (tip Netflix), compusă dintr-un backend orientat pe obiecte în C++23 legat la o bază de date SQLite3 și o interfață grafică interactivă realizată cu SFML.
 
 Aplicația oferă o experiență utilizator completă, gestionând:
-1. **Catalogul Multimedia**: O ierarhie polimorfică de conținut video (`Film` -> `Documentar` și `Serial` moștenind `ContinutVideo`), fiecare având detalii specifice, link-uri de vizionare, postere dinamice și logici specifice de rulare (cum ar fi rularea secvențială a episoadelor sau restricționarea documentarelor premium).
+1. **Catalogul Multimedia**: O ierarhie polimorfică de conținut video (`Film`, `Serial` și `CanalTV` moștenind direct `ContinutVideo`, iar `Documentar` derivând din `Film`), fiecare având detalii specifice, postere dinamice și logici de rulare individuale (ex: rularea secvențială a episoadelor, restricții pentru documentare premium sau inregistrare de stream-uri TV Live).
 2. **Utilizatori & Profile**: Management de profiluri cu avataruri personalizate în funcție de vârstă (Copil, Adolescent, Adult), istoricul vizionărilor și watchlist-uri active.
 3. **Statistici și Analytics live**: Calcularea automată a timpului total vizionat, a timpului rămas în watchlist și a recomandărilor inteligente (cel mai bun conținut nevizionat în funcție de rating-ul global).
 4. **Panoul de Administrare**: Permite adăugarea în timp real a noi elemente în catalog și testarea interactivă a excepțiilor sistemului (cum ar fi ștergerea de elemente inexistente).
