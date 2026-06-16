@@ -8,7 +8,8 @@ enum class FiltruCatalog {
     Toate,
     Filme,
     Seriale,
-    Documentare
+    Documentare,
+    CanaleTV
 };
 
 class ContinutVideo {

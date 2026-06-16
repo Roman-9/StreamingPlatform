@@ -2,6 +2,7 @@
 #include "Film.h"
 #include "Serial.h"
 #include "Documentar.h"
+#include "CanalTV.h"
 #include "Exceptii.h"
 #include <sqlite3.h>
 #include <iostream>
@@ -67,6 +68,17 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
             int durata = std::stoi(valoareSpecifica);
             std::string subiect = gen;
             catalogGlobal.push_back(std::make_shared<Documentar>(titlu, gen, descriere, durata, subiect, varstaMinima, calePoster, linkVizionare));
+        }
+        else if (tip == "CANAL_TV") {
+            std::string program = "Program Necunoscut";
+            bool live = true;
+            
+            std::stringstream ss(valoareSpecifica);
+            std::string token;
+            if (std::getline(ss, token, ',')) program = token;
+            if (std::getline(ss, token, ',')) live = (token == "1");
+            
+            catalogGlobal.push_back(std::make_shared<CanalTV>(titlu, gen, descriere, varstaMinima, program, live, calePoster, linkVizionare));
         }
     }
 

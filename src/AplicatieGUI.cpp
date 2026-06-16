@@ -2,6 +2,7 @@
 #include "Film.h"
 #include "Serial.h"
 #include "Documentar.h"
+#include "CanalTV.h"
 #include "Exceptii.h"
 #include <SFML/Window/Event.hpp>
 #include <iostream>
@@ -124,9 +125,9 @@ void AplicatieGUI::randeazaEcranLogin() {
 }
 
 void AplicatieGUI::randeazaCatalog() {
-    std::vector<std::string> numeFiltre = {"TOATE", "FILME", "SERIALE", "DOCUMENTARE"};
+    std::vector<std::string> numeFiltre = {"TOATE", "FILME", "SERIALE", "DOCUMENTARE", "CANALE TV"};
     float filtruX = 40.f;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         sf::RectangleShape btnFiltru({150.f, 30.f}); btnFiltru.setPosition({filtruX, 75.f});
         btnFiltru.setFillColor(i == static_cast<int>(filtruCurent) ? sf::Color(229, 9, 20) : sf::Color(40, 40, 40));
         window.draw(btnFiltru);
@@ -302,6 +303,22 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     dislikeTxt.setFillColor(sf::Color(229, 9, 20)); dislikeTxt.setPosition({contentLeftX + 465.f, btnY + 15.f});
     window.draw(dislikeTxt);
 
+    if (auto canal = dynamic_cast<CanalTV*>(continutSelectat.get())) {
+        sf::RectangleShape dvrBtn({140.f, 50.f});
+        if (canal->getInregistreazaAcum()) {
+            dvrBtn.setFillColor(sf::Color(180, 20, 20));
+        } else {
+            dvrBtn.setFillColor(sf::Color(100, 20, 150));
+        }
+        dvrBtn.setPosition({contentLeftX + 560.f, btnY});
+        window.draw(dvrBtn);
+        sf::Text dvrTxt(font); 
+        dvrTxt.setString(canal->getInregistreazaAcum() ? "STOP REC" : "REC LIVE"); 
+        dvrTxt.setCharacterSize(16);
+        dvrTxt.setFillColor(sf::Color::White); dvrTxt.setStyle(sf::Text::Bold);
+        dvrTxt.setPosition({contentLeftX + 580.f, btnY + 15.f}); window.draw(dvrTxt);
+    }
+
 
     if (continutSelectat->areEpisoade()) {
         float episodesRightX = 800.f;
@@ -453,34 +470,40 @@ void AplicatieGUI::randeazaPanouAdmin() {
     titru.setPosition({40.f, 150.f}); window.draw(titru);
 
     sf::RectangleShape fBtn({350.f, 50.f}); fBtn.setFillColor(sf::Color(229, 9, 20));
-    fBtn.setPosition({40.f, 300.f}); window.draw(fBtn);
+    fBtn.setPosition({40.f, 220.f}); window.draw(fBtn);
     sf::Text fTxt(font); fTxt.setString("+ Adauga Film Nou");
     fTxt.setCharacterSize(16); fTxt.setFillColor(sf::Color::White); fTxt.setStyle(sf::Text::Bold);
-    fTxt.setPosition({60.f, 315.f}); window.draw(fTxt);
+    fTxt.setPosition({60.f, 235.f}); window.draw(fTxt);
 
     sf::RectangleShape sBtn({350.f, 50.f}); sBtn.setFillColor(sf::Color(229, 9, 20));
-    sBtn.setPosition({40.f, 370.f}); window.draw(sBtn);
+    sBtn.setPosition({40.f, 290.f}); window.draw(sBtn);
     sf::Text sTxt(font); sTxt.setString("+ Adauga Serial Nou");
     sTxt.setCharacterSize(16); sTxt.setFillColor(sf::Color::White); sTxt.setStyle(sf::Text::Bold);
-    sTxt.setPosition({60.f, 385.f}); window.draw(sTxt);
+    sTxt.setPosition({60.f, 305.f}); window.draw(sTxt);
 
     sf::RectangleShape dBtn({350.f, 50.f}); dBtn.setFillColor(sf::Color(229, 9, 20));
-    dBtn.setPosition({40.f, 440.f}); window.draw(dBtn);
+    dBtn.setPosition({40.f, 360.f}); window.draw(dBtn);
     sf::Text dTxt(font); dTxt.setString("+ Adauga Documentar Nou");
     dTxt.setCharacterSize(16); dTxt.setFillColor(sf::Color::White); dTxt.setStyle(sf::Text::Bold);
-    dTxt.setPosition({60.f, 455.f}); window.draw(dTxt);
+    dTxt.setPosition({60.f, 375.f}); window.draw(dTxt);
 
     sf::RectangleShape mBtn({400.f, 50.f}); mBtn.setFillColor(sf::Color(255, 165, 0));
-    mBtn.setPosition({40.f, 510.f}); window.draw(mBtn);
+    mBtn.setPosition({40.f, 430.f}); window.draw(mBtn);
     sf::Text mTxt(font); mTxt.setString("TESTEAZA EXCEPTII DB");
     mTxt.setCharacterSize(16); mTxt.setFillColor(sf::Color::Black); mTxt.setStyle(sf::Text::Bold);
-    mTxt.setPosition({60.f, 525.f}); window.draw(mTxt);
+    mTxt.setPosition({60.f, 445.f}); window.draw(mTxt);
 
     sf::RectangleShape delBtn({400.f, 50.f}); delBtn.setFillColor(sf::Color(180, 20, 20));
-    delBtn.setPosition({40.f, 580.f}); window.draw(delBtn);
+    delBtn.setPosition({40.f, 500.f}); window.draw(delBtn);
     sf::Text delTxt(font); delTxt.setString("Sterge 'The Batman' din Catalog");
     delTxt.setCharacterSize(16); delTxt.setFillColor(sf::Color::White); delTxt.setStyle(sf::Text::Bold);
-    delTxt.setPosition({60.f, 595.f}); window.draw(delTxt);
+    delTxt.setPosition({60.f, 515.f}); window.draw(delTxt);
+
+    sf::RectangleShape toggleBtn({400.f, 50.f}); toggleBtn.setFillColor(sf::Color(150, 150, 20));
+    toggleBtn.setPosition({40.f, 570.f}); window.draw(toggleBtn);
+    sf::Text toggleTxt(font); toggleTxt.setString("Comuta starea LIVE pentru Sky News");
+    toggleTxt.setCharacterSize(16); toggleTxt.setFillColor(sf::Color::Black); toggleTxt.setStyle(sf::Text::Bold);
+    toggleTxt.setPosition({60.f, 585.f}); window.draw(toggleTxt);
 }
 
 
@@ -530,7 +553,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         }
 
         float filtruX = 40.f;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             if (sf::FloatRect({filtruX, 75.f}, {150.f, 30.f}).contains(coordMouse)) {
                 filtruCurent = static_cast<FiltruCatalog>(i); mesajStatus = "Catalog filtrat."; return;
             }
@@ -614,6 +637,22 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             return;
         }
 
+        if (auto canal = dynamic_cast<CanalTV*>(continutSelectat.get())) {
+            if (sf::FloatRect({contentLeftX + 560.f, btnY}, {140.f, 50.f}).contains(coordMouse)) {
+                try {
+                    canal->inregistreazaProgram();
+                    if (canal->getInregistreazaAcum()) {
+                        mesajStatus = "[DVR] Am pornit inregistrarea pentru programul TV!";
+                    } else {
+                        mesajStatus = "[DVR] Am oprit inregistrarea pentru programul TV.";
+                    }
+                } catch (const StreamingException& e) {
+                    mesajStatus = std::string("[EROARE DVR] ") + e.what();
+                }
+                return;
+            }
+        }
+
         if (continutSelectat->areEpisoade()) {
             float episodesRightX = 800.f;
             float epY = 350.f;
@@ -667,7 +706,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         if (sf::FloatRect({40.f, 80.f}, {100.f, 40.f}).contains(coordMouse)) { stareCurenta = StareAplicatie::Login; return; }
 
         // 1. Adauga Film
-        if (sf::FloatRect({40.f, 300.f}, {350.f, 50.f}).contains(coordMouse)) {
+        if (sf::FloatRect({40.f, 220.f}, {350.f, 50.f}).contains(coordMouse)) {
             platforma.adaugaContinutInCatalog(std::make_shared<Film>(
                 "The Batman", "Actiune", "O noua investigatie intunecata in Gotham...", 170, 16,
                 "assets/images/batman.jpg", "https://www.youtube.com/watch?v=mqqft2x_Aa4"));
@@ -676,7 +715,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         }
 
         // 2. Adauga Serial
-        if (sf::FloatRect({40.f, 370.f}, {350.f, 50.f}).contains(coordMouse)) {
+        if (sf::FloatRect({40.f, 290.f}, {350.f, 50.f}).contains(coordMouse)) {
             platforma.adaugaContinutInCatalog(std::make_shared<Serial>(
                 "The Last of Us S2", "Thriller", "Continuarea calatoriei pline de pericole a lui Ellie...",
                 std::vector<int>{55, 62, 58}, 18,
@@ -686,7 +725,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         }
 
         // 3. Adauga Documentar
-        if (sf::FloatRect({40.f, 440.f}, {350.f, 50.f}).contains(coordMouse)) {
+        if (sf::FloatRect({40.f, 360.f}, {350.f, 50.f}).contains(coordMouse)) {
             platforma.adaugaContinutInCatalog(std::make_shared<Documentar>(
                 "Free Solo", "Sport", "National Geographic", 100, "Alpinism", 12,
                 "assets/images/free_solo.jpg", "https://www.youtube.com/watch?v=urRVZ4SW7WU"));
@@ -694,7 +733,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             mesajStatus = "[ADMIN] Documentarul Free Solo adaugat."; return;
         }
 
-        if (sf::FloatRect({40.f, 510.f}, {400.f, 50.f}).contains(coordMouse)) {
+        if (sf::FloatRect({40.f, 430.f}, {400.f, 50.f}).contains(coordMouse)) {
             try {
                 // Fortam o eroare cautand ceva ce sigur nu exista in baza de date
                 platforma.cautaContinutDupaTitlu("Acest Film Nu Exista");
@@ -706,7 +745,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             return;
         }
 
-        if (sf::FloatRect({40.f, 580.f}, {400.f, 50.f}).contains(coordMouse)) {
+        if (sf::FloatRect({40.f, 500.f}, {400.f, 50.f}).contains(coordMouse)) {
             try {
                 platforma.stergeContinutDinCatalog("The Batman");
                 mesajStatus = "[ADMIN] Filmul 'The Batman' a fost sters cu succes.";
@@ -714,6 +753,21 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             catch (const StreamingException& e) {
                 mesajStatus = std::string("[ADMIN EROARE] ") + e.what();
             }
+            return;
+        }
+
+        if (sf::FloatRect({40.f, 570.f}, {400.f, 50.f}).contains(coordMouse)) {
+            bool gasit = false;
+            for (auto& cv : platforma.getCatalogGlobal()) {
+                if (cv->getTitlu() == "Sky News") {
+                    if (auto canal = dynamic_cast<CanalTV*>(cv.get())) {
+                        canal->setEsteLive(!canal->getEsteLive());
+                        mesajStatus = "[ADMIN] Starea LIVE pentru 'Sky News' a fost comutata!";
+                        gasit = true;
+                    }
+                }
+            }
+            if (!gasit) mesajStatus = "[ADMIN EROARE] Canalul 'Sky News' nu a putut fi gasit.";
             return;
         }
     }
