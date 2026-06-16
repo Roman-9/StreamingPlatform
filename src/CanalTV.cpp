@@ -48,14 +48,17 @@ bool CanalTV::getEsteLive() const {
     return esteLive;
 }
 
+// cppcheck-suppress unusedFunction
 void CanalTV::setEsteLive(bool status) {
     esteLive = status;
 }
 
+// cppcheck-suppress unusedFunction
 bool CanalTV::getInregistreazaAcum() const {
     return inregistreazaAcum;
 }
 
+// cppcheck-suppress unusedFunction
 void CanalTV::inregistreazaProgram() {
     if (!esteLive) {
         throw StreamingException("Acest program este in reluare, nu poate fi inregistrat in direct!");
