@@ -3,8 +3,7 @@
 #include "Serial.h"
 #include <iostream>
 
-Utilizator::Utilizator(std::string n, std::string p, int v) : nume(std::move(n)), plan(std::move(p)), varsta(v) {
-    strategieRecomandare = std::make_shared<RecomandareDupaRating>();
+Utilizator::Utilizator(std::string n, std::string p, int v) : nume(std::move(n)), plan(std::move(p)), varsta(v), strategieRecomandare(std::make_shared<RecomandareDupaRating>()) {
 }
 
 // cppcheck-suppress unusedFunction
@@ -16,6 +15,7 @@ int Utilizator::getVarsta() const { return varsta; }
 // cppcheck-suppress unusedFunction
 void Utilizator::setPlan(const std::string& planNou) { plan = planNou; }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::setStrategieRecomandare(std::shared_ptr<StrategieRecomandare> strategie) {
     if (strategie) {
         strategieRecomandare = strategie;
