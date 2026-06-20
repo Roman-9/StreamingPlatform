@@ -8,6 +8,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+#include "StrategieRecomandare.h"
+#include "ContinutFactory.h"
 #include <sstream>
 
 AplicatieGUI::AplicatieGUI(PlatformaStreaming& p)
@@ -20,7 +22,7 @@ AplicatieGUI::AplicatieGUI(PlatformaStreaming& p)
 {
     platforma.incarcaCatalogDinDB();
 
-    window.create(sf::VideoMode({1280, 720}), "Netflix C++ Clone");
+    window.create(sf::VideoMode({1280, 800}), "Netflix C++ Clone");
     window.setFramerateLimit(60);
 
     if (!font.openFromFile("assets/fonts/Roboto.ttf")) {
@@ -30,7 +32,7 @@ AplicatieGUI::AplicatieGUI(PlatformaStreaming& p)
 }
 
 void AplicatieGUI::incarcaPostere() {
-    for (const auto& cv : platforma.getCatalogGlobal()) {
+    for (const auto& cv : platforma.getCatalogGlobal().getLista()) {
         if (!cv->getCalePoster().empty()) {
             sf::Texture textura;
             if (textura.loadFromFile(cv->getCalePoster())) {
@@ -53,12 +55,12 @@ void AplicatieGUI::randeazaBaraNavigatie() {
     logo.setPosition({40.f, 15.f}); window.draw(logo);
 
     if (stareCurenta != StareAplicatie::Login && indexUserCurent != -1) {
-        auto& user = platforma.getUtilizatori()[indexUserCurent];
+        auto user = platforma.getUtilizatori()[indexUserCurent];
 
         sf::RectangleShape profilBtn({140.f, 35.f});
         profilBtn.setFillColor(sf::Color(30, 30, 30));profilBtn.setPosition({1100.f, 12.f}); window.draw(profilBtn);
 
-        sf::Text profilTxt(font); profilTxt.setString(user.getNume()); profilTxt.setCharacterSize(16);
+        sf::Text profilTxt(font); profilTxt.setString(user->getNume()); profilTxt.setCharacterSize(16);
         profilTxt.setFillColor(sf::Color::White); profilTxt.setStyle(sf::Text::Bold);
         profilTxt.setPosition({1115.f, 20.f}); window.draw(profilTxt);
     }
@@ -71,7 +73,7 @@ void AplicatieGUI::randeazaBaraNavigatie() {
 void AplicatieGUI::randeazaStatus() {
     sf::Text status(font);
     status.setString(mesajStatus); status.setCharacterSize(16);
-    status.setFillColor(sf::Color(200, 200, 200)); status.setPosition({40.f, 690.f});
+    status.setFillColor(sf::Color(200, 200, 200)); status.setPosition({40.f, 770.f});
     window.draw(status);
 }
 
@@ -87,10 +89,10 @@ void AplicatieGUI::randeazaEcranLogin() {
     for (size_t i = 0; i < utilizatori.size(); i++) {
         float x = startX + i * spatiuX;
         sf::RectangleShape avatar({110.f, 110.f}); avatar.setPosition({x, y});
-        avatar.setFillColor(utilizatori[i].getVarsta() < 12 ? sf::Color(0, 150, 255) : (utilizatori[i].getVarsta() < 18 ? sf::Color(150, 0, 150) : sf::Color(229, 9, 20)));
+        avatar.setFillColor(utilizatori[i]->getVarsta() < 12 ? sf::Color(0, 150, 255) : (utilizatori[i]->getVarsta() < 18 ? sf::Color(150, 0, 150) : sf::Color(229, 9, 20)));
         window.draw(avatar);
 
-        sf::Text numeUser(font); numeUser.setString(utilizatori[i].getNume()); numeUser.setCharacterSize(18);
+        sf::Text numeUser(font); numeUser.setString(utilizatori[i]->getNume()); numeUser.setCharacterSize(18);
         numeUser.setFillColor(sf::Color::White); numeUser.setPosition({x + 10.f, y + 120.f});
         window.draw(numeUser);
     }
@@ -138,9 +140,20 @@ void AplicatieGUI::randeazaCatalog() {
         txtFiltru.setPosition({filtruX + 25.f, 80.f}); window.draw(txtFiltru);
         filtruX += 170.f;
     }
+    auto user = platforma.getUtilizatori()[indexUserCurent];
+    std::string recomandareTop = user->getTopRecomandare(platforma.getCatalogGlobal().getLista());
 
-    auto& catalog = platforma.getCatalogGlobal();
-    float startX = 40.f; float startY = 140.f;
+    sf::RectangleShape strategyBtn({150.f, 35.f}); strategyBtn.setPosition({40.f, 115.f});
+    strategyBtn.setFillColor(sf::Color(50, 150, 50)); window.draw(strategyBtn);
+    sf::Text strategyTxt(font); strategyTxt.setString("Schimba Strategia"); strategyTxt.setCharacterSize(14);
+    strategyTxt.setFillColor(sf::Color::White); strategyTxt.setStyle(sf::Text::Bold);
+    strategyTxt.setPosition({52.f, 122.f}); window.draw(strategyTxt);
+
+    sf::Text recTxt(font); recTxt.setString("Recomandare speciala pentru tine: " + recomandareTop); recTxt.setCharacterSize(16);
+    recTxt.setFillColor(sf::Color(255, 215, 0)); recTxt.setStyle(sf::Text::Bold); recTxt.setPosition({220.f, 122.f}); window.draw(recTxt);
+
+    auto& catalog = platforma.getCatalogGlobal().getLista();
+    float startX = 40.f; float startY = 170.f;
     float cardWidth = 280.f; float cardHeight = 160.f;
     float spatiuX = 30.f; float spatiuY = 40.f;
     int coloane = 4;
@@ -191,7 +204,7 @@ void AplicatieGUI::randeazaCatalog() {
     sf::Text totalTxt(font);
     totalTxt.setString("Titluri in memorie RAM: " + std::to_string(ContinutVideo::getNumarTotalContinut()));
     totalTxt.setCharacterSize(14); totalTxt.setFillColor(sf::Color(100, 100, 100));
-    totalTxt.setPosition({1080.f, 680.f}); window.draw(totalTxt);
+    totalTxt.setPosition({1080.f, 760.f}); window.draw(totalTxt);
 }
 
 
@@ -201,10 +214,10 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     if (postere.find(continutSelectat->getTitlu()) != postere.end()) {
         sf::Sprite fundal(postere[continutSelectat->getTitlu()]); fundal.setPosition({0.f, 60.f});
         sf::Vector2u size = postere[continutSelectat->getTitlu()].getSize();
-        fundal.setScale({1280.f / size.x, 620.f / size.y});
+        fundal.setScale({1280.f / size.x, 740.f / size.y});
         window.draw(fundal);
 
-        sf::RectangleShape strat({1280.f, 620.f}); strat.setPosition({0.f, 60.f});
+        sf::RectangleShape strat({1280.f, 740.f}); strat.setPosition({0.f, 60.f});
         strat.setFillColor(sf::Color(0, 0, 0, 190));
         window.draw(strat);
     }
@@ -357,7 +370,7 @@ void AplicatieGUI::randeazaPaginaDetalii() {
 }
 void AplicatieGUI::randeazaPaginaStatistici() {
     if (indexUserCurent == -1) return;
-    auto& user = platforma.getUtilizatori()[indexUserCurent];
+    auto user = platforma.getUtilizatori()[indexUserCurent];
 
     sf::RectangleShape backBtn({100.f, 40.f});
     backBtn.setFillColor(sf::Color(40, 40, 40)); backBtn.setPosition({40.f, 80.f});
@@ -374,16 +387,16 @@ void AplicatieGUI::randeazaPaginaStatistici() {
     logoutTxt.setPosition({1105.f, 90.f}); window.draw(logoutTxt);
 
     sf::Text titru(font);
-    titru.setString("Profilul lui " + user.getNume()); titru.setCharacterSize(36);
+    titru.setString("Profilul lui " + user->getNume()); titru.setCharacterSize(36);
     titru.setFillColor(sf::Color::White); titru.setStyle(sf::Text::Bold);
     titru.setPosition({40.f, 150.f}); window.draw(titru);
 
-    int minuteVizionate = user.getTimpTotalVizionat();
-    int minuteRamase = user.getTimpRamasWatchlist();
-    std::string recomandareTop = user.getTopRecomandare(platforma.getCatalogGlobal());
+    int minuteVizionate = user->getTimpTotalVizionat();
+    int minuteRamase = user->getTimpRamasWatchlist();
+    std::string recomandareTop = user->getTopRecomandare(platforma.getCatalogGlobal().getLista());
 
-    std::string detaliiCont = "Abonament: " + user.getPlan() + "\n";
-    detaliiCont += "Varsta: " + std::to_string(user.getVarsta()) + " ani\n\n";
+    std::string detaliiCont = "Abonament: " + user->getPlan() + "\n";
+    detaliiCont += "Varsta: " + std::to_string(user->getVarsta()) + " ani\n\n";
     detaliiCont += "[ ANALYTICS LIVE ]\n";
     detaliiCont += "-> Timp total vizionat: " + std::to_string(minuteVizionate) + " min\n";
     detaliiCont += "-> Watchlist ramas:   " + std::to_string(minuteRamase) + " min\n\n";
@@ -409,12 +422,13 @@ void AplicatieGUI::randeazaPaginaStatistici() {
     downgradeTxt.setFillColor(sf::Color::White); downgradeTxt.setStyle(sf::Text::Bold);
     downgradeTxt.setPosition({230.f, 492.f}); window.draw(downgradeBtn); window.draw(downgradeTxt);
 
+
     sf::Text wlTitlu(font); wlTitlu.setString("Watchlist (Click pentru stergere):");
     wlTitlu.setCharacterSize(20); wlTitlu.setFillColor(sf::Color(229, 9, 20));
     wlTitlu.setPosition({420.f, 230.f}); window.draw(wlTitlu);
 
     float wlY = 270.f;
-    auto& listaWatchlist = user.getWatchlist().getLista();
+    auto& listaWatchlist = user->getWatchlist().getLista();
     if (listaWatchlist.empty()) {
         sf::Text golTxt(font); golTxt.setString("(Lista este goala)");
         golTxt.setCharacterSize(16); golTxt.setFillColor(sf::Color(120, 120, 120));
@@ -436,7 +450,7 @@ void AplicatieGUI::randeazaPaginaStatistici() {
     istoricTitlu.setPosition({820.f, 230.f}); window.draw(istoricTitlu);
 
     float istY = 270.f;
-    auto& istoricList = istoricUtilizatori[user.getNume()];
+    auto& istoricList = istoricUtilizatori[user->getNume()];
     if (istoricList.empty()) {
         sf::Text golTxt(font); golTxt.setString("(Nu ai vizionat nimic)");
         golTxt.setCharacterSize(16); golTxt.setFillColor(sf::Color(120, 120, 120));
@@ -517,7 +531,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         for (size_t i = 0; i < utilizatori.size(); i++) {
             if (sf::FloatRect({startX + i * spatiuX, y}, {110.f, 110.f}).contains(coordMouse)) {
                 indexUserCurent = static_cast<int>(i); stareCurenta = StareAplicatie::Catalog;
-                mesajStatus = "Conectat ca: " + utilizatori[i].getNume(); return;
+                mesajStatus = "Conectat ca: " + utilizatori[i]->getNume(); return;
             }
         }
 
@@ -546,8 +560,8 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             stareCurenta = StareAplicatie::Statistici;
             mesajStatus = "Statistici generate in consola.";
             std::cout << "\n========== RAPORT PROFIL ==========\n";
-            auto& u = platforma.getUtilizatori()[indexUserCurent];
-            std::cout << u;
+            auto u = platforma.getUtilizatori()[indexUserCurent];
+            std::cout << *u;
             std::cout << "===================================\n";
             return;
         }
@@ -560,10 +574,25 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             filtruX += 170.f;
         }
 
-        auto& catalog = platforma.getCatalogGlobal();
-        int coloane = 4; float startX = 40.f, startY = 140.f;
+        auto& catalog = platforma.getCatalogGlobal().getLista();
+        int coloane = 4; float startX = 40.f, startY = 170.f;
         float cardWidth = 280.f; float cardHeight = 160.f;
         float spatiuX = 30.f; float spatiuY = 40.f;
+        auto user = platforma.getUtilizatori()[indexUserCurent];
+
+        if (sf::FloatRect({40.f, 115.f}, {150.f, 35.f}).contains(coordMouse)) {
+            static bool toggle = false;
+            if (toggle) {
+                user->setStrategieRecomandare(std::make_shared<RecomandareDupaRating>());
+                mesajStatus = "Strategie schimbata: Recomandare dupa Rating";
+            } else {
+                user->setStrategieRecomandare(std::make_shared<RecomandareScurta>());
+                mesajStatus = "Strategie schimbata: Recomandare Scurta";
+            }
+            toggle = !toggle;
+            return;
+        }
+
         int indexDesenat = 0;
         for (const auto& cv : catalog) {
             if (!cv->matchesFilter(filtruCurent)) continue;
@@ -588,19 +617,19 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         float contentLeftX = 60.f;
         float btnY = 550.f;
-        auto& user = platforma.getUtilizatori()[indexUserCurent];
+        auto user = platforma.getUtilizatori()[indexUserCurent];
 
         if (sf::FloatRect({contentLeftX, btnY}, {140.f, 50.f}).contains(coordMouse)) {
-            if (user.getVarsta() < continutSelectat->getVarstaMinima()) {
+            if (user->getVarsta() < continutSelectat->getVarstaMinima()) {
                 mesajStatus = "[BLOCAT] Varsta insuficienta! Necesita minim " + std::to_string(continutSelectat->getVarstaMinima()) + " ani.";
                 return;
             }
-            if (continutSelectat->estePremium() && user.getPlan() != "Premium") {
+            if (continutSelectat->estePremium() && user->getPlan() != "Premium") {
                 mesajStatus = "[LOCKED] Acest continut este exclusiv pentru utilizatorii PREMIUM!";
                 return;
             }
-            user.marcheazaCaVazut(continutSelectat);
-            auto& hist = istoricUtilizatori[user.getNume()];
+            user->marcheazaCaVazut(continutSelectat);
+            auto& hist = istoricUtilizatori[user->getNume()];
             if (std::find(hist.begin(), hist.end(), continutSelectat->getTitlu()) == hist.end()) hist.push_back(continutSelectat->getTitlu());
             mesajStatus = "[PLAY] Se incarca playerul...";
             continutSelectat->play();
@@ -610,14 +639,14 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         }
 
         if (sf::FloatRect({contentLeftX + 155.f, btnY}, {160.f, 50.f}).contains(coordMouse)) {
-            try { user.adaugaInWatchlist(continutSelectat); mesajStatus = "[SUCCES] Adaugat in Watchlist."; }
+            try { user->adaugaInWatchlist(continutSelectat); mesajStatus = "[SUCCES] Adaugat in Watchlist."; }
             catch (const std::exception& e) { mesajStatus = "[BLOCAT] " + std::string(e.what()); }
             return;
         }
 
         if (sf::FloatRect({contentLeftX + 330.f, btnY}, {100.f, 50.f}).contains(coordMouse)) {
             try {
-                user.acordaNota(continutSelectat->getTitlu(), 10);
+                user->acordaNota(continutSelectat->getTitlu(), 10);
                 noteAcordate[continutSelectat->getTitlu()] = 10;
                 mesajStatus = "[VOT] Ai trimis nota 10. Media s-a actualizat!";
             } catch (const StreamingException& e) {
@@ -628,7 +657,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         if (sf::FloatRect({contentLeftX + 445.f, btnY}, {100.f, 50.f}).contains(coordMouse)) {
             try {
-                user.acordaNota(continutSelectat->getTitlu(), 1);
+                user->acordaNota(continutSelectat->getTitlu(), 1);
                 noteAcordate[continutSelectat->getTitlu()] = 1;
                 mesajStatus = "[VOT] Ai trimis nota 1. Media s-a actualizat!";
             } catch (const StreamingException& e) {
@@ -658,14 +687,14 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             float epY = 350.f;
             for(size_t i = 0; i < std::min<size_t>(continutSelectat->getDurateEpisoade().size(), 3); i++) {
                 if (sf::FloatRect({episodesRightX, epY}, {450.f, 35.f}).contains(coordMouse)) {
-                    if (user.getVarsta() < continutSelectat->getVarstaMinima()) {
+                    if (user->getVarsta() < continutSelectat->getVarstaMinima()) {
                         mesajStatus = "[BLOCAT] Acest serial contine scene restrictionate varstei tale!"; return;
                     }
                     // Actualizam episodul curent in obiectul serial direct
                     continutSelectat->setEpisodCurent(static_cast<int>(i) + 1);
-                    user.marcheazaCaVazut(continutSelectat);
+                    user->marcheazaCaVazut(continutSelectat);
 
-                    auto& hist = istoricUtilizatori[user.getNume()];
+                    auto& hist = istoricUtilizatori[user->getNume()];
                     std::string labelEp = continutSelectat->getTitlu() + " (Vizionat Ep. " + std::to_string(i + 1) + ")";
                     if (std::find(hist.begin(), hist.end(), labelEp) == hist.end()) hist.push_back(labelEp);
                     mesajStatus = "[SERIAL] Ai terminat de vizionat Episodul " + std::to_string(i + 1); return;
@@ -681,22 +710,23 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             indexUserCurent = -1; stareCurenta = StareAplicatie::Login; mesajStatus = "Te-ai deconectat."; return;
         }
 
-        auto& user = platforma.getUtilizatori()[indexUserCurent];
+        auto user = platforma.getUtilizatori()[indexUserCurent];
 
         if (sf::FloatRect({40.f, 480.f}, {160.f, 40.f}).contains(coordMouse)) {
-            user.setPlan("Premium"); mesajStatus = "Felicitari! Ai acum acces la planul PREMIUM."; return;
+            user->setPlan("Premium"); mesajStatus = "Felicitari! Ai acum acces la planul PREMIUM."; return;
         }
 
         if (sf::FloatRect({210.f, 480.f}, {180.f, 40.f}).contains(coordMouse)) {
-            user.setPlan("Basic"); mesajStatus = "Plan retrogradat la standardul Basic."; return;
+            user->setPlan("Basic"); mesajStatus = "Plan retrogradat la standardul Basic."; return;
         }
 
-        auto& listaWatchlist = user.getWatchlist().getLista();
+
+        auto& listaWatchlist = user->getWatchlist().getLista();
         float wlY = 280.f;
         for (size_t i = 0; i < listaWatchlist.size(); i++) {
             if (sf::FloatRect({360.f, wlY}, {420.f, 30.f}).contains(coordMouse)) {
                 std::string titluSters = listaWatchlist[i]->getTitlu();
-                user.stergeDinWatchlistDupaTitlu(titluSters);
+                user->stergeDinWatchlistDupaTitlu(titluSters);
                 mesajStatus = "[BACKEND] Eliminat cu succes: " + titluSters; return;
             }
             wlY += 35.f;
@@ -707,7 +737,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         // 1. Adauga Film
         if (sf::FloatRect({40.f, 220.f}, {350.f, 50.f}).contains(coordMouse)) {
-            platforma.adaugaContinutInCatalog(std::make_shared<Film>(
+            platforma.adaugaContinutInCatalog(ContinutFactory::creeazaFilm(
                 "The Batman", "Actiune", "O noua investigatie intunecata in Gotham...", 170, 16,
                 "assets/images/batman.jpg", "https://www.youtube.com/watch?v=mqqft2x_Aa4"));
             incarcaPostere();
@@ -716,7 +746,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         // 2. Adauga Serial
         if (sf::FloatRect({40.f, 290.f}, {350.f, 50.f}).contains(coordMouse)) {
-            platforma.adaugaContinutInCatalog(std::make_shared<Serial>(
+            platforma.adaugaContinutInCatalog(ContinutFactory::creeazaSerial(
                 "The Last of Us S2", "Thriller", "Continuarea calatoriei pline de pericole a lui Ellie...",
                 std::vector<int>{55, 62, 58}, 18,
                 "assets/images/tlou.jpg", "https://www.youtube.com/watch?v=uLtkt8BonwM"));
@@ -726,7 +756,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         // 3. Adauga Documentar
         if (sf::FloatRect({40.f, 360.f}, {350.f, 50.f}).contains(coordMouse)) {
-            platforma.adaugaContinutInCatalog(std::make_shared<Documentar>(
+            platforma.adaugaContinutInCatalog(ContinutFactory::creeazaDocumentar(
                 "Free Solo", "Sport", "National Geographic", 100, "Alpinism", 12,
                 "assets/images/free_solo.jpg", "https://www.youtube.com/watch?v=urRVZ4SW7WU"));
             incarcaPostere();
@@ -758,7 +788,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
 
         if (sf::FloatRect({40.f, 570.f}, {400.f, 50.f}).contains(coordMouse)) {
             bool gasit = false;
-            for (auto& cv : platforma.getCatalogGlobal()) {
+            for (auto& cv : platforma.getCatalogGlobal().getLista()) {
                 if (cv->getTitlu() == "Sky News") {
                     if (auto canal = dynamic_cast<CanalTV*>(cv.get())) {
                         canal->setEsteLive(!canal->getEsteLive());
@@ -791,13 +821,14 @@ void AplicatieGUI::ruleaza() {
         window.clear(sf::Color(15, 15, 15));
 
         randeazaBaraNavigatie();
-        randeazaStatus();
 
         if (stareCurenta == StareAplicatie::Login) randeazaEcranLogin();
         else if (stareCurenta == StareAplicatie::Catalog) randeazaCatalog();
         else if (stareCurenta == StareAplicatie::Detalii) randeazaPaginaDetalii();
         else if (stareCurenta == StareAplicatie::Statistici) randeazaPaginaStatistici();
         else if (stareCurenta == StareAplicatie::AdminPanel) randeazaPanouAdmin();
+
+        randeazaStatus();
 
         window.display();
 

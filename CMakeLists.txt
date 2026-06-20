@@ -73,12 +73,13 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/Film.cpp
         src/Serial.cpp
         src/Exceptii.cpp
-        src/Watchlist.cpp
         src/Utilizator.cpp
         src/PlatformaStreaming.cpp
         src/Documentar.cpp
         src/AplicatieGUI.cpp
         src/CanalTV.cpp
+        src/StrategieRecomandare.cpp
+        src/ContinutFactory.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

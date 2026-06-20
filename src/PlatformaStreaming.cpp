@@ -1,8 +1,5 @@
 #include "PlatformaStreaming.h"
-#include "Film.h"
-#include "Serial.h"
-#include "Documentar.h"
-#include "CanalTV.h"
+#include "ContinutFactory.h"
 #include "Exceptii.h"
 #include <sqlite3.h>
 #include <iostream>
@@ -14,7 +11,7 @@ PlatformaStreaming::PlatformaStreaming(std::string path) : dbPath(std::move(path
 // cppcheck-suppress unusedFunction
 void PlatformaStreaming::adaugaContinutInCatalog(const std::shared_ptr<ContinutVideo>& cv) {
     if (cv) {
-        catalogGlobal.push_back(cv);
+        catalogGlobal.adauga(cv);
     }
 }
 
@@ -53,7 +50,7 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
 
         if (tip == "FILM") {
             int durata = std::stoi(valoareSpecifica);
-            catalogGlobal.push_back(std::make_shared<Film>(titlu, gen, descriere, durata, varstaMinima, calePoster, linkVizionare));
+            catalogGlobal.adauga(ContinutFactory::creeazaFilm(titlu, gen, descriere, durata, varstaMinima, calePoster, linkVizionare));
         }
         else if (tip == "SERIAL") {
             std::vector<int> vectorDurate;
@@ -62,12 +59,12 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
             while (std::getline(ss, token, ',')) {
                 if (!token.empty()) vectorDurate.push_back(std::stoi(token));
             }
-            catalogGlobal.push_back(std::make_shared<Serial>(titlu, gen, descriere, vectorDurate, varstaMinima, calePoster, linkVizionare));
+            catalogGlobal.adauga(ContinutFactory::creeazaSerial(titlu, gen, descriere, vectorDurate, varstaMinima, calePoster, linkVizionare));
         }
         else if (tip == "DOCUMENTAR") {
             int durata = std::stoi(valoareSpecifica);
             std::string subiect = gen;
-            catalogGlobal.push_back(std::make_shared<Documentar>(titlu, gen, descriere, durata, subiect, varstaMinima, calePoster, linkVizionare));
+            catalogGlobal.adauga(ContinutFactory::creeazaDocumentar(titlu, gen, descriere, durata, subiect, varstaMinima, calePoster, linkVizionare));
         }
         else if (tip == "CANAL_TV") {
             std::string program = "Program Necunoscut";
@@ -78,7 +75,7 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
             if (std::getline(ss, token, ',')) program = token;
             if (std::getline(ss, token, ',')) live = (token == "1");
             
-            catalogGlobal.push_back(std::make_shared<CanalTV>(titlu, gen, descriere, varstaMinima, program, live, calePoster, linkVizionare));
+            catalogGlobal.adauga(ContinutFactory::creeazaCanalTV(titlu, gen, descriere, varstaMinima, program, live, calePoster, linkVizionare));
         }
     }
 
@@ -87,39 +84,33 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
 }
 // cppcheck-suppress unusedFunction
 void PlatformaStreaming::inregistreazaUtilizator(const std::string& nume, int varsta) {
-    utilizatori.push_back(Utilizator(nume, "Free", varsta));
+    utilizatori.adauga(std::make_shared<Utilizator>(nume, "Free", varsta));
 }
 
 // cppcheck-suppress unusedFunction
 std::shared_ptr<ContinutVideo> PlatformaStreaming::cautaContinutDupaTitlu(const std::string& titlu) const {
-    for (const auto& cv : catalogGlobal) {
-        if (cv->getTitlu() == titlu) {
-            return cv;
-        }
-    }
+    auto cv = gasesteDaca(catalogGlobal, [&titlu](const std::shared_ptr<ContinutVideo>& item) { return item->getTitlu() == titlu; });
+    if (cv) return cv;
     throw TitluInexistentException(titlu);
 }
 
 // cppcheck-suppress unusedFunction
-const std::vector<std::shared_ptr<ContinutVideo>>& PlatformaStreaming::getCatalogGlobal() const {
+const ListaGenerica<ContinutVideo>& PlatformaStreaming::getCatalogGlobal() const {
     return catalogGlobal;
 }
 
 // cppcheck-suppress unusedFunction
-std::vector<Utilizator>& PlatformaStreaming::getUtilizatori() {
+ListaGenerica<Utilizator>& PlatformaStreaming::getUtilizatori() {
     return utilizatori;
 }
 
 // cppcheck-suppress unusedFunction
 void PlatformaStreaming::stergeContinutDinCatalog(const std::string& titluCautat) {
-    auto it = std::remove_if(catalogGlobal.begin(), catalogGlobal.end(),
-        [&titluCautat](const std::shared_ptr<ContinutVideo>& cv) {
+    try {
+        catalogGlobal.stergeDaca([&titluCautat](const std::shared_ptr<ContinutVideo>& cv) {
             return cv->getTitlu() == titluCautat;
         });
-
-    if (it != catalogGlobal.end()) {
-        catalogGlobal.erase(it, catalogGlobal.end());
-    } else {
+    } catch (...) {
         throw TitluInexistentException("Filmul '" + titluCautat + "' nu a fost gasit pentru stergere!");
     }
 }

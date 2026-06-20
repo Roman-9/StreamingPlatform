@@ -8,8 +8,8 @@
 class PlatformaStreaming {
 private:
     std::string dbPath;
-    std::vector<std::shared_ptr<ContinutVideo>> catalogGlobal;
-    std::vector<Utilizator> utilizatori;
+    ListaGenerica<ContinutVideo> catalogGlobal;
+    ListaGenerica<Utilizator> utilizatori;
 
 public:
     explicit PlatformaStreaming(std::string path);
@@ -20,8 +20,8 @@ public:
     void incarcaCatalogDinDB();
     void inregistreazaUtilizator(const std::string& nume, int varsta);
     std::shared_ptr<ContinutVideo> cautaContinutDupaTitlu(const std::string& titlu) const;
-    const std::vector<std::shared_ptr<ContinutVideo>>& getCatalogGlobal() const;
-    std::vector<Utilizator>& getUtilizatori();
+    const ListaGenerica<ContinutVideo>& getCatalogGlobal() const;
+    ListaGenerica<Utilizator>& getUtilizatori();
 
     friend std::ostream& operator<<(std::ostream& os, const PlatformaStreaming& ps);
 };
