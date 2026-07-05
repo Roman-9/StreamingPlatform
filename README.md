@@ -8,6 +8,19 @@ Aplicația oferă o experiență utilizator completă, gestionând:
 3. **Statistici și Analytics live**: Calcularea automată a timpului total vizionat, a timpului rămas în watchlist și a recomandărilor inteligente (cel mai bun conținut nevizionat în funcție de rating-ul global).
 4. **Panoul de Administrare**: Permite adăugarea în timp real a noi elemente în catalog și testarea interactivă a excepțiilor sistemului (cum ar fi ștergerea de elemente inexistente).
 
+## Funcționalități detaliate ale aplicației
+
+- **Sistemul Premium**: Diferențiază utilizatorii în funcție de planul de abonament (Free vs Premium). Anumite tipuri de conținut video (ex: `CanalTV`) sunt blocate în spatele planului Premium (folosind funcția virtuală `estePremium()`). Dacă un utilizator Free încearcă să vizioneze, va fi refuzat de sistem. Conturile pentru copii nu au permisiunea să facă upgrade la Premium din interfața de cont.
+- **Sistemul DVR pentru Canale TV**: Conținutul de tip `CanalTV` extinde funcționalitatea clasică printr-un sistem DVR care permite înregistrarea programelor Live. Acest lucru este posibil folosind Downcasting inteligent (`std::dynamic_pointer_cast<CanalTV>`) în timpul interacțiunilor grafice.
+- **Profiluri pe grupe de Vârstă**: Fiecare utilizator are o vârstă definită, iar aplicația filtrează la execuție (atât la rândarea grafică, cât și la apăsarea butoanelor și algoritmii de recomandări) orice fel de conținut care are `varstaMinima` mai mare decât vârsta profilului curent.
+- **Gestiunea Watchlist-ului**: Evită posibilitatea ca același titlu să fie adăugat de mai multe ori prin verificări logice interne în lista de favorite. Dacă titlul există, aruncă o excepție semnalizată corespunzător în interfața utilizatorului.
+- **Recomandări Polimorfice (Strategy Pattern)**: Sistemul permite injectarea de strategii diferite de recomandare (ex: pe baza celui mai bun rating vs pe baza celui mai scurt timp rămas) direct din interfață.
+- **Parameterized Factory Pattern**: Încapsulează complexitatea parsării șirurilor din baza de date direct într-o metodă centrală `ContinutFactory::creeazaDinBazaDeDate`, respectând principiile de creare ale obiectelor (delegarea către fabrică în loc de "poluarea" platformei centrale).
+
+## Declarație privind sursele de date externe
+- Fontul utilizat pentru interfața grafică SFML (`Roboto`) a fost preluat din colecția publică Google Fonts, fiind distribuit sub licența gratuită Open Font License (OFL).
+- Datele despre filme (titluri, descrieri, genuri, rating-uri) sunt preluate cu scop pur educațional și informativ de pe IMDB (Internet Movie Database) și TMDB.
+- Toate imaginile posterelor aferente au fost descărcate prin Google Images și de pe platforma TMDB, aparținând în mod exclusiv deținătorilor legali de drepturi de autor.
 
 ## Structura Bazei de Date (streaming.db)
 

@@ -12,6 +12,25 @@
 #include "ContinutFactory.h"
 #include <sstream>
 
+namespace {
+    bool openUrl(const std::string& url) {
+#if defined(_WIN32)
+        std::string cmd = "cmd /c start \"\" \"" + url + "\"";
+        return std::system(cmd.c_str()) == 0;
+#elif defined(__APPLE__)
+        std::string cmd = "open \"" + url + "\"";
+        return std::system(cmd.c_str()) == 0;
+#else
+        std::string cmd = "xdg-open \"" + url + "\" >/dev/null 2>&1";
+        return std::system(cmd.c_str()) == 0;
+#endif
+    }
+
+    inline bool openYouTubeUrl(const std::string& youtubeUrl) {
+        return openUrl(youtubeUrl);
+    }
+}
+
 AplicatieGUI::AplicatieGUI(PlatformaStreaming& p)
     : platforma(p),
       mesajStatus("Selecteaza un profil sau intra ca Admin."),
@@ -164,6 +183,7 @@ void AplicatieGUI::randeazaCatalog() {
     int indexDesenat = 0;
     for (const auto& cv : catalog) {
         if (!cv->matchesFilter(filtruCurent)) continue;
+        if (cv->getVarstaMinima() > user->getVarsta()) continue;
 
         int rand = indexDesenat / coloane; int col = indexDesenat % coloane;
         float x = startX + col * (cardWidth + spatiuX); float y = startY + rand * (cardHeight + spatiuY);
@@ -316,7 +336,7 @@ void AplicatieGUI::randeazaPaginaDetalii() {
     dislikeTxt.setFillColor(sf::Color(229, 9, 20)); dislikeTxt.setPosition({contentLeftX + 465.f, btnY + 15.f});
     window.draw(dislikeTxt);
 
-    if (auto canal = dynamic_cast<CanalTV*>(continutSelectat.get())) {
+    if (auto canal = std::dynamic_pointer_cast<CanalTV>(continutSelectat)) {
         sf::RectangleShape dvrBtn({140.f, 50.f});
         if (canal->getInregistreazaAcum()) {
             dvrBtn.setFillColor(sf::Color(180, 20, 20));
@@ -596,6 +616,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         int indexDesenat = 0;
         for (const auto& cv : catalog) {
             if (!cv->matchesFilter(filtruCurent)) continue;
+            if (cv->getVarstaMinima() > user->getVarsta()) continue;
 
             int rand = indexDesenat / coloane; int col = indexDesenat % coloane;
             if (sf::FloatRect({startX + col * (cardWidth + spatiuX), startY + rand * (cardHeight + spatiuY)}, {cardWidth, cardHeight}).contains(coordMouse)) {
@@ -633,8 +654,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             if (std::find(hist.begin(), hist.end(), continutSelectat->getTitlu()) == hist.end()) hist.push_back(continutSelectat->getTitlu());
             mesajStatus = "[PLAY] Se incarca playerul...";
             continutSelectat->play();
-            std::string comanda = "start " + continutSelectat->getLinkVizionare();
-            system(comanda.c_str());
+            openYouTubeUrl(continutSelectat->getLinkVizionare());
             return;
         }
 
@@ -666,7 +686,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             return;
         }
 
-        if (auto canal = dynamic_cast<CanalTV*>(continutSelectat.get())) {
+        if (auto canal = std::dynamic_pointer_cast<CanalTV>(continutSelectat)) {
             if (sf::FloatRect({contentLeftX + 560.f, btnY}, {140.f, 50.f}).contains(coordMouse)) {
                 try {
                     canal->inregistreazaProgram();
@@ -713,11 +733,25 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
         auto user = platforma.getUtilizatori()[indexUserCurent];
 
         if (sf::FloatRect({40.f, 480.f}, {160.f, 40.f}).contains(coordMouse)) {
-            user->setPlan("Premium"); mesajStatus = "Felicitari! Ai acum acces la planul PREMIUM."; return;
+            if (user->getVarsta() < 18) {
+                mesajStatus = "[LOCKED] Doar adultii (18+) pot achizitiona planul Premium.";
+                return;
+            }
+            user->setPlan("Premium"); 
+            for (auto& u : platforma.getUtilizatori().getLista()) {
+                u->setPlan("Premium");
+            }
+            mesajStatus = "Felicitari! Ai cont PREMIUM (inclusiv restul profilurilor)."; 
+            return;
         }
 
         if (sf::FloatRect({210.f, 480.f}, {180.f, 40.f}).contains(coordMouse)) {
-            user->setPlan("Basic"); mesajStatus = "Plan retrogradat la standardul Basic."; return;
+            user->setPlan("Basic"); 
+            for (auto& u : platforma.getUtilizatori().getLista()) {
+                u->setPlan("Basic");
+            }
+            mesajStatus = "Plan retrogradat la Basic (pentru toate profilurile)."; 
+            return;
         }
 
 
@@ -790,7 +824,7 @@ void AplicatieGUI::proceseazaClick(sf::Vector2i pozitieMouse) {
             bool gasit = false;
             for (auto& cv : platforma.getCatalogGlobal().getLista()) {
                 if (cv->getTitlu() == "Sky News") {
-                    if (auto canal = dynamic_cast<CanalTV*>(cv.get())) {
+                    if (auto canal = std::dynamic_pointer_cast<CanalTV>(cv)) {
                         canal->setEsteLive(!canal->getEsteLive());
                         mesajStatus = "[ADMIN] Starea LIVE pentru 'Sky News' a fost comutata!";
                         gasit = true;

@@ -21,6 +21,8 @@ public:
     
     bool matchesFilter(FiltruCatalog filtru) const override;
     std::string getDetaliiSpecifice() const override;
+    // cppcheck-suppress unusedFunction
+    bool estePremium() const override { return true; }
     
     const std::string& getProgramCurent() const;
     bool getEsteLive() const;

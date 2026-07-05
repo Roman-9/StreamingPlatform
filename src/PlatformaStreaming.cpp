@@ -47,35 +47,8 @@ void PlatformaStreaming::incarcaCatalogDinDB() {
 
         const char* rawLink = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
         std::string linkVizionare = rawLink ? rawLink : "https://www.youtube.com";
-
-        if (tip == "FILM") {
-            int durata = std::stoi(valoareSpecifica);
-            catalogGlobal.adauga(ContinutFactory::creeazaFilm(titlu, gen, descriere, durata, varstaMinima, calePoster, linkVizionare));
-        }
-        else if (tip == "SERIAL") {
-            std::vector<int> vectorDurate;
-            std::stringstream ss(valoareSpecifica);
-            std::string token;
-            while (std::getline(ss, token, ',')) {
-                if (!token.empty()) vectorDurate.push_back(std::stoi(token));
-            }
-            catalogGlobal.adauga(ContinutFactory::creeazaSerial(titlu, gen, descriere, vectorDurate, varstaMinima, calePoster, linkVizionare));
-        }
-        else if (tip == "DOCUMENTAR") {
-            int durata = std::stoi(valoareSpecifica);
-            std::string subiect = gen;
-            catalogGlobal.adauga(ContinutFactory::creeazaDocumentar(titlu, gen, descriere, durata, subiect, varstaMinima, calePoster, linkVizionare));
-        }
-        else if (tip == "CANAL_TV") {
-            std::string program = "Program Necunoscut";
-            bool live = true;
-            
-            std::stringstream ss(valoareSpecifica);
-            std::string token;
-            if (std::getline(ss, token, ',')) program = token;
-            if (std::getline(ss, token, ',')) live = (token == "1");
-            
-            catalogGlobal.adauga(ContinutFactory::creeazaCanalTV(titlu, gen, descriere, varstaMinima, program, live, calePoster, linkVizionare));
+        if (auto cv = ContinutFactory::creeazaDinBazaDeDate(tip, titlu, gen, descriere, valoareSpecifica, varstaMinima, calePoster, linkVizionare)) {
+            catalogGlobal.adauga(cv);
         }
     }
 
