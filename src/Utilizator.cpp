@@ -24,6 +24,7 @@ void Utilizator::setStrategieRecomandare(
   }
 }
 
+// cppcheck-suppress unusedFunction
 void Utilizator::adaugaInWatchlist(const std::shared_ptr<ContinutVideo> &cv) {
   if (cv && varsta < cv->getVarstaMinima()) {
     throw LimitaVarstaException(cv->getTitlu(), cv->getVarstaMinima());
